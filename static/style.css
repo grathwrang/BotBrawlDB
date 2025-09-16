@@ -1,0 +1,80 @@
+
+@font-face {
+  font-family: 'Bank Gothic';
+  src: local('BankGothic Md BT'), local('Bank Gothic'), local('BankGothic');
+  font-weight: 700;
+  font-style: normal;
+}
+:root{
+  --bg:#111315;
+  --panel:#1a1c1f;
+  --panel2:#202225;
+  --text:#e6e6e6;
+  --muted:#a0a0a0;
+  --red:#e53935;
+  --green:#00c583;
+  --blue:#3ea6ff;
+  --btn:#2b2e32;
+  --btnBorder:#3a3f45;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter, 'Segoe UI', Roboto, Arial, sans-serif}
+.container{max-width:1400px;margin:0 auto;padding:8px 16px}
+.top-tabs{display:flex;gap:8px;padding:6px 0;border-bottom:1px solid #2a2e33}
+.top-tabs a{padding:6px 10px;background:#181a1d;border:1px solid #2a2e33;border-bottom:none;border-radius:6px 6px 0 0;color:#cfd8dc;text-decoration:none}
+.top-tabs a.active{background:#1f2226;color:#fff}
+.page-title{font-family:'Bank Gothic','BankGothic Md BT',Michroma,'Eurostile','Square 721',sans-serif;font-size:48px;font-weight:800;text-align:center;color:var(--red);margin:12px 0 8px;text-transform:capitalize}
+.panel{background:var(--panel);border:1px solid #2a2e33;border-radius:6px;padding:8px}
+table{width:100%;border-collapse:collapse;font-size:16px}
+th,td{padding:10px 12px;border-bottom:1px solid #2a2e33}
+thead th{color:var(--red);font-weight:800}
+td.center,th.center{text-align:center}
+td.right,th.right{text-align:right}
+.btn{background:var(--btn);border:1px solid var(--btnBorder);color:#fff;border-radius:6px;padding:8px 12px;cursor:pointer}
+.btn:hover{filter:brightness(1.1)}
+.btn-red{background:#9c2a28;border-color:#ab3b39}
+.btn-green{background:#0f8b63;border-color:#16a077}
+.btn-blue{background:#245d89;border-color:#2d74ac}
+.btn-ghost{background:#1c1f23;color:#ddd}
+.grid{display:grid;gap:12px}
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:repeat(3, 1fr)}
+.grid-4{grid-template-columns:repeat(4, 1fr)}
+.footer{position:sticky;bottom:0;background:#0f1012;border-top:1px solid #2a2e33;padding:10px 12px}
+.footer .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+label{display:block;font-size:14px;color:#cfd8dc;margin-bottom:4px}
+input,select{width:100%;background:#0f1114;color:#fff;border:1px solid #2a2e33;border-radius:6px;padding:8px}
+.badge{display:inline-block;background:#1f2226;border:1px solid #2a2e33;color:#cfd8dc;border-radius:6px;padding:4px 8px}
+.status{color:#cfd8dc}
+hr.sep{border:0;border-top:1px solid #2a2e33;margin:12px 0}
+.sidebar-actions{display:flex;flex-direction:column;gap:10px}
+.checkbox-inline{display:flex;align-items:center;justify-content:center}
+.dropzone{border:1px dashed #444;background:#17191c;color:#d0d0d0;border-radius:6px;height:220px;display:flex;align-items:center;justify-content:center;text-align:center}
+img.thumb{max-width:100%;max-height:220px;display:block;margin:auto}
+.small{font-size:12px;color:#aaa}
+pre.overlay{white-space:pre-wrap;word-break:break-word;background:#0b0c0e;padding:12px;border:1px solid #2a2e33;border-radius:6px}
+
+
+/* --- v3 fixes for image dropzone --- */
+.dropzone{position:relative}
+.dropzone input[type="file"]{position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.dropzone .preview{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:10px}
+.dropzone .preview img{max-width:100%;max-height:100%;border-radius:4px}
+
+/* v5: modal + row hover */
+tr.robot-row{cursor:pointer}
+tr.robot-row:hover{background:#1f2226}
+dialog#robotModal{border:1px solid #2a2e33;background:#111315;color:#e6e6e6;border-radius:8px;max-width:1000px;width:1000px}
+dialog::backdrop{background:rgba(0,0,0,0.65)}
+.modal-body{padding:12px}
+.modal-actions{display:flex;justify-content:flex-end;padding:10px 12px;border-top:1px solid #2a2e33}
+.modal-close{background:#9c2a28;border:1px solid #ab3b39;color:#fff;border-radius:6px;padding:6px 12px;cursor:pointer}
+.info-grid{display:grid;grid-template-columns:220px 1fr 300px;gap:8px;align-items:start}
+.info-label{color:#cfd8dc}
+.info-value{background:#1a1c1f;border:1px solid #2a2e33;border-radius:4px;padding:4px 8px;display:inline-block}
+.card-image{max-width:100%;max-height:220px;border-radius:4px}
+
+.name-cell{font-family:'Bank Gothic','BankGothic Md BT',Michroma,'Eurostile','Square 721',sans-serif}
+
+.robot-link{cursor:pointer}
+.robot-link:hover{opacity:0.9}

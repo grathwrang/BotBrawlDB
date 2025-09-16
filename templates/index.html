@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block body %}
+  <div class="page-title">{{ wc }}</div>
+  <div class="panel">
+    <table>
+      <thead><tr><th>Robot Name</th><th class="center">Rating</th><th class="center">Matches</th><th class="center">Present</th><th class="right">Actions</th></tr></thead>
+      <tbody>
+      {% for name, info in robots %}
+        <tr class="robot-row" data-wc="{{ wc }}" data-name="{{ name }}">
+          <td class="name-cell">{{ name }}</td>
+          <td class="center">{{ info.get('rating', 1000) }}</td>
+          <td class="center">{{ (info.get('matches') or []) | length }}</td>
+          <td class="center checkbox-inline">
+            <form method="post" action="/robot/presence">
+              <input type="hidden" name="wc" value="{{ wc }}">
+              <input type="hidden" name="name" value="{{ name }}">
+              <input type="hidden" name="present" value="{{ 0 if info.get('present') else 1 }}">
+              <input type="checkbox" onChange="this.previousElementSibling.value=this.checked?1:0; this.form.submit();" {% if info.get('present') %}checked{% endif %}>
+            </form>
+          </td>
+          <td class="right">
+            <form method="post" action="/robot/delete" style="display:inline-block" onsubmit="return confirm('Delete {{ name }}?')">
+              <input type="hidden" name="wc" value="{{ wc }}">
+              <input type="hidden" name="name" value="{{ name }}">
+              <button class="btn btn-red" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="sep">
+
+  <div class="grid grid-3">
+    <div class="panel">
+      <h3 style="margin:6px 0 10px">Add Robot</h3>
+      <form method="post" action="/robot/add" class="grid" enctype="multipart/form-data">
+        <input type="hidden" name="wc" value="{{ wc }}">
+        <label>Robot Name *<input name="name" required></label>
+        <label>Starting Elo *<input type="number" name="rating" value="1000"></label>
+        <label>Driver Name<input name="driver"></label>
+        <label>Team Name<input name="team"></label>
+        <div class="dropzone" style="height:220px"><div class="preview"><span>Drag & Drop image here<br><span class="small">(or click to select)</span></span></div><input type="file" name="image" accept="image/*"></div>
+        <button class="btn btn-green" type="submit">Add Robot</button>
+      </form>
+    </div>
+    <div class="panel">
+      <h3 style="margin:6px 0 10px">Edit Robot</h3>
+      <form method="post" action="/robot/edit" class="grid" enctype="multipart/form-data">
+        <input type="hidden" name="wc" value="{{ wc }}">
+        <label>Robot Name * (old)<input name="old" required></label>
+        <label>New Name<input name="new"></label>
+        <label>Starting Elo *<input type="number" name="rating"></label>
+        <label>Driver Name<input name="driver"></label>
+        <label>Team Name<input name="team"></label>
+        <div class="dropzone" style="height:220px"><div class="preview"><span>Drag & Drop image here<br><span class="small">(or click to select)</span></span></div><input type="file" name="image" accept="image/*"></div>
+        <button class="btn" type="submit">Save Changes</button>
+      </form>
+    </div>
+    <div class="panel">
+      <h3 style="margin:6px 0 10px">Settings</h3>
+      <form method="post" action="/save_settings" class="grid grid-2">
+        <input type="hidden" name="wc" value="{{ wc }}">
+        <label>Base K<input type="number" name="k" value="{{ k }}"></label>
+        <label>KO Weight<input type="number" step="0.01" name="ko" value="{{ ko }}"></label>
+        <button class="btn" type="submit">Save Settings</button>
+        <a class="btn" href="{{ url_for('export_wc_csv', wc=wc) }}">Export Analytics</a>
+      </form>
+      <form method="post" action="/reset_all" style="margin-top:8px">
+        <input type="hidden" name="wc" value="{{ wc }}">
+        <button class="btn btn-red" type="submit" onclick="return confirm('Reset all Elo for {{ wc }}?')">Reset All Elo</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="row">
+      {% set top = TOP_MATCH %}
+      <form method="post" action="/submit_match" style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
+        <input type="hidden" name="wc" value="{{ wc }}">
+        <div style="min-width:220px"><label>Red Corner<input name="red" list="robotsList" value="{{ top.red if top and top.weight_class==wc else '' }}"></label></div>
+        <div style="min-width:220px"><label>White Corner<input name="white" list="robotsList" value="{{ top.white if top and top.weight_class==wc else '' }}"></label></div>
+        <div style="min-width:220px"><label>Result
+          <select name="result">
+            <option>Red wins JD</option>
+            <option>Red wins KO</option>
+            <option>White wins JD</option>
+            <option>White wins KO</option>
+            <option>Draw</option>
+          </select></label></div>
+        <button class="btn btn-red" type="submit">Submit Match</button>
+      </form>
+      <form method="post" action="/undo">
+        <input type="hidden" name="wc" value="{{ wc }}">
+        <button class="btn" type="submit">Undo Last Match</button>
+      </form>
+    </div>
+  </div>
+
+  <datalist id="robotsList">
+  {% for name, info in robots %}<option value="{{ name }}">{% endfor %}
+  </datalist>
+{% endblock %}

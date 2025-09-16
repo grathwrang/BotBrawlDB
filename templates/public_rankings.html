@@ -1,0 +1,39 @@
+{% extends "public_base.html" %}
+{% block body %}
+  <div class="page-title">{{ wc }} Rankings</div>
+  <p class="small" style="margin:6px 0 10px">Double click a robot for more info!</p>
+
+  <div class="panel" style="margin-bottom:12px">
+    <form method="get" action="/RankingsPublic" style="display:flex;gap:10px;align-items:center">
+      <label>Weight Class
+        <select name="wc" onchange="this.form.submit()">
+          {% for w in WEIGHT_CLASSES %}
+            <option value="{{ w }}" {% if w==wc %}selected{% endif %}>{{ w }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      
+    </form>
+  </div>
+
+  <div class="panel">
+    <table>
+      <thead>
+        <tr><th class="center">Rank</th><th>Robot</th><th class="center">Elo</th><th class="center">W-L-D</th><th class="center">KO W-L</th><th>Driver</th><th>Team</th></tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr>
+          <td class="center">{{ r.rank }}</td>
+          <td class="name-cell"><span class="robot-link" data-wc="{{ wc }}" data-name="{{ r.name }}">{{ r.name }}</span></td>
+          <td class="center">{{ r.rating }}</td>
+          <td class="center">{{ r.wins }}-{{ r.losses }}-{{ r.draws }}</td>
+          <td class="center">{{ r.ko_wins }}-{{ r.ko_losses }}</td>
+          <td>{{ r.driver }}</td>
+          <td>{{ r.team }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

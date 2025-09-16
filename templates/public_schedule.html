@@ -1,0 +1,41 @@
+{% extends "public_base.html" %}
+{% block body %}
+  <div class="page-title">Fight Schedule</div>
+  <p class="small" style="margin:6px 0 10px">Double click a robot for more info!</p>
+
+  {% if top %}
+  <div class="panel" style="margin-bottom:12px">
+    <h3 style="margin:6px 0 10px;color:#e53935">Now</h3>
+    <div class="grid grid-3">
+      <div>
+        <div class="name-cell" style="font-size:22px"><span class="name-cell robot-link" data-wc="{{ top.weight_class }}" data-name="{{ top.red.name }}">{{ top.red.name }}</span></div>
+        <div class="small">{{ top.red.driver }} — {{ top.red.team }}</div>
+        <div class="small">Elo {{ top.red.elo }} · W-L-D {{ top.red.wins }}-{{ top.red.losses }}-{{ top.red.draws }} · KOs {{ top.red.ko_wins }}</div>
+      </div>
+      <div class="center" style="align-self:center"><span class="badge">{{ top.weight_class }}</span></div>
+      <div class="right">
+        <div class="name-cell" style="font-size:22px"><span class="name-cell robot-link" data-wc="{{ top.weight_class }}" data-name="{{ top.white.name }}">{{ top.white.name }}</span></div>
+        <div class="small">{{ top.white.driver }} — {{ top.white.team }}</div>
+        <div class="small">Elo {{ top.white.elo }} · W-L-D {{ top.white.wins }}-{{ top.white.losses }}-{{ top.white.draws }} · KOs {{ top.white.ko_wins }}</div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="panel">
+    <h3 style="margin:6px 0 10px;color:#e53935">Tonight's Schedule</h3>
+    <table>
+      <thead><tr><th class="center">#</th><th class="center">Weight</th><th>Red</th><th>White</th></tr></thead>
+      <tbody>
+      {% for m in schedule %}
+        <tr>
+          <td class="center">{{ loop.index }}</td>
+          <td class="center">{{ m.weight_class }}</td>
+          <td class="name-cell"><span class="robot-link" data-wc="{{ m.weight_class }}" data-name="{{ m.red }}">{{ m.red }}</span></td>
+          <td class="name-cell"><span class="robot-link" data-wc="{{ m.weight_class }}" data-name="{{ m.white }}">{{ m.white }}</span></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

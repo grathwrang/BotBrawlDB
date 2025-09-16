@@ -1,0 +1,211 @@
+{
+  "robots": {
+    "Left Shoe Right Foot": {
+      "rating": 1002,
+      "matches": [
+        {
+          "match_id": 2,
+          "timestamp": 1757720114,
+          "red_corner": "Left Shoe Right Foot",
+          "white_corner": "Mini Vortex",
+          "result": "White wins JD",
+          "old_rating_red": 1000,
+          "old_rating_white": 1019,
+          "new_rating_red": 985,
+          "new_rating_white": 1034,
+          "change_red": -15,
+          "change_white": 15
+        },
+        {
+          "match_id": 3,
+          "timestamp": 1757722287,
+          "red_corner": "Shredder",
+          "white_corner": "Left Shoe Right Foot",
+          "result": "White wins JD",
+          "old_rating_red": 1000,
+          "old_rating_white": 985,
+          "new_rating_red": 983,
+          "new_rating_white": 1002,
+          "change_red": -17,
+          "change_white": 17
+        }
+      ],
+      "driver_name": "Garrett",
+      "team_name": "Botshed Robotics",
+      "weight_class": "Antweights",
+      "present": true,
+      "image": "/static/uploads/1757681027325_Left_Shoe_Right_Foot_transp.png"
+    },
+    "Mini Vortex": {
+      "rating": 1034,
+      "matches": [
+        {
+          "match_id": 1,
+          "timestamp": 1757718696,
+          "red_corner": "Royal Reaper",
+          "white_corner": "Mini Vortex",
+          "result": "White wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1000,
+          "new_rating_red": 984,
+          "new_rating_white": 1019,
+          "change_red": -16,
+          "change_white": 19
+        },
+        {
+          "match_id": 2,
+          "timestamp": 1757720114,
+          "red_corner": "Left Shoe Right Foot",
+          "white_corner": "Mini Vortex",
+          "result": "White wins JD",
+          "old_rating_red": 1000,
+          "old_rating_white": 1019,
+          "new_rating_red": 985,
+          "new_rating_white": 1034,
+          "change_red": -15,
+          "change_white": 15
+        }
+      ],
+      "driver_name": "Amarveer",
+      "team_name": "Dreadbots",
+      "weight_class": "Antweights",
+      "present": false,
+      "image": "/static/uploads/1757681630604_Mini_Vortex_transp.png"
+    },
+    "Shredder": {
+      "rating": 983,
+      "matches": [
+        {
+          "match_id": 3,
+          "timestamp": 1757722287,
+          "red_corner": "Shredder",
+          "white_corner": "Left Shoe Right Foot",
+          "result": "White wins JD",
+          "old_rating_red": 1000,
+          "old_rating_white": 985,
+          "new_rating_red": 983,
+          "new_rating_white": 1002,
+          "change_red": -17,
+          "change_white": 17
+        }
+      ],
+      "driver_name": "Chanpreet",
+      "team_name": "Dreadbots",
+      "weight_class": "Antweights",
+      "present": false,
+      "image": "/static/uploads/1757681677135_Shredder_transp.png"
+    },
+    "Sawshimi": {
+      "rating": 1000,
+      "matches": [],
+      "driver_name": "Damian",
+      "team_name": "LOUDHOUSE",
+      "weight_class": "Antweights",
+      "present": true,
+      "image": "/static/uploads/1757920542980_sawshimi_transp.png"
+    },
+    "Royal Reaper": {
+      "rating": 984,
+      "matches": [
+        {
+          "match_id": 1,
+          "timestamp": 1757718696,
+          "red_corner": "Royal Reaper",
+          "white_corner": "Mini Vortex",
+          "result": "White wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1000,
+          "new_rating_red": 984,
+          "new_rating_white": 1019,
+          "change_red": -16,
+          "change_white": 19
+        }
+      ],
+      "driver_name": "Colin / Rory",
+      "team_name": "Goodman Robots",
+      "weight_class": "Antweights",
+      "present": false,
+      "image": "/static/uploads/1757682050687_Royal_Reaper_transp.png"
+    },
+    "Pistol Shrimp": {
+      "rating": 1000,
+      "matches": [],
+      "driver_name": "Lucas",
+      "team_name": "Dremel Gaming Robotics",
+      "weight_class": "Antweights",
+      "present": true,
+      "image": "/static/uploads/1757920416986_pistol_shrimp_transp.png"
+    },
+    "Dragonfly": {
+      "rating": 1000,
+      "matches": [],
+      "driver_name": "Leo",
+      "team_name": "Ping Industries",
+      "weight_class": "Antweights",
+      "present": true
+    },
+    "Fanter": {
+      "rating": 1000,
+      "matches": [],
+      "driver_name": "Benjamin",
+      "team_name": "Team JOTO",
+      "weight_class": "Antweights",
+      "present": true,
+      "image": "/static/uploads/1757920705019_fanter_transp.png"
+    },
+    "Glup": {
+      "rating": 1000,
+      "matches": [],
+      "driver_name": "Benjamin",
+      "team_name": "Team JOTO",
+      "weight_class": "Antweights",
+      "present": true
+    }
+  },
+  "history": [
+    {
+      "match_id": 1,
+      "timestamp": 1757718696,
+      "red_corner": "Royal Reaper",
+      "white_corner": "Mini Vortex",
+      "result": "White wins KO",
+      "old_rating_red": 1000,
+      "old_rating_white": 1000,
+      "new_rating_red": 984,
+      "new_rating_white": 1019,
+      "change_red": -16,
+      "change_white": 19
+    },
+    {
+      "match_id": 2,
+      "timestamp": 1757720114,
+      "red_corner": "Left Shoe Right Foot",
+      "white_corner": "Mini Vortex",
+      "result": "White wins JD",
+      "old_rating_red": 1000,
+      "old_rating_white": 1019,
+      "new_rating_red": 985,
+      "new_rating_white": 1034,
+      "change_red": -15,
+      "change_white": 15
+    },
+    {
+      "match_id": 3,
+      "timestamp": 1757722287,
+      "red_corner": "Shredder",
+      "white_corner": "Left Shoe Right Foot",
+      "result": "White wins JD",
+      "old_rating_red": 1000,
+      "old_rating_white": 985,
+      "new_rating_red": 983,
+      "new_rating_white": 1002,
+      "change_red": -17,
+      "change_white": 17
+    }
+  ],
+  "next_match_id": 4,
+  "settings": {
+    "K": 32,
+    "ko_weight": 1.1
+  }
+}

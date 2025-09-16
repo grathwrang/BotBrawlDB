@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BotBrawl</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="top-tabs">
+      <a href="{{ url_for('schedule_public') }}" class="{{ 'active' if request.path == '/SchedulePublic' else '' }}">Schedule</a>
+      <a href="{{ url_for('rankings_public') }}" class="{{ 'active' if request.path == '/RankingsPublic' else '' }}">Rankings</a>
+    </div>
+    {% block body %}{% endblock %}
+    <dialog id="robotModal">
+      <div class="modal-body" id="robotModalContent"></div>
+      <div class="modal-actions"><button class="modal-close" onclick="document.getElementById('robotModal').close()">Close</button></div>
+    </dialog>
+  </div>
+</body>
+</html>

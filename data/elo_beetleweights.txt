@@ -1,0 +1,341 @@
+{
+  "robots": {
+    "NV (Easiest Thing in The World)": {
+      "rating": 969,
+      "matches": [
+        {
+          "match_id": 5,
+          "timestamp": 1757720811,
+          "red_corner": "NV (Easiest Thing in The World)",
+          "white_corner": "Vortex",
+          "result": "White wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1019,
+          "new_rating_red": 985,
+          "new_rating_white": 1037,
+          "change_red": -15,
+          "change_white": 18
+        },
+        {
+          "match_id": 6,
+          "timestamp": 1757721944,
+          "red_corner": "Shrubert",
+          "white_corner": "NV (Easiest Thing in The World)",
+          "result": "Red wins KO",
+          "old_rating_red": 984,
+          "old_rating_white": 985,
+          "new_rating_red": 1003,
+          "new_rating_white": 969,
+          "change_red": 19,
+          "change_white": -16
+        }
+      ],
+      "driver_name": "William",
+      "team_name": "Ghost",
+      "weight_class": "Beetleweights",
+      "present": false,
+      "image": "/static/uploads/1757681507481_NV_Easiest_Thing_in_The_World_transp.png"
+    },
+    "Vortex": {
+      "rating": 1037,
+      "matches": [
+        {
+          "match_id": 1,
+          "timestamp": 1757719409,
+          "red_corner": "Shrubert",
+          "white_corner": "Vortex",
+          "result": "White wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1000,
+          "new_rating_red": 984,
+          "new_rating_white": 1019,
+          "change_red": -16,
+          "change_white": 19
+        },
+        {
+          "match_id": 5,
+          "timestamp": 1757720811,
+          "red_corner": "NV (Easiest Thing in The World)",
+          "white_corner": "Vortex",
+          "result": "White wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1019,
+          "new_rating_red": 985,
+          "new_rating_white": 1037,
+          "change_red": -15,
+          "change_white": 18
+        }
+      ],
+      "driver_name": "Amarveer",
+      "team_name": "Dreadbots",
+      "weight_class": "Beetleweights",
+      "present": false,
+      "image": "/static/uploads/1757681716880_vortex_transp.png"
+    },
+    "Shrubert": {
+      "rating": 1003,
+      "matches": [
+        {
+          "match_id": 1,
+          "timestamp": 1757719409,
+          "red_corner": "Shrubert",
+          "white_corner": "Vortex",
+          "result": "White wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1000,
+          "new_rating_red": 984,
+          "new_rating_white": 1019,
+          "change_red": -16,
+          "change_white": 19
+        },
+        {
+          "match_id": 6,
+          "timestamp": 1757721944,
+          "red_corner": "Shrubert",
+          "white_corner": "NV (Easiest Thing in The World)",
+          "result": "Red wins KO",
+          "old_rating_red": 984,
+          "old_rating_white": 985,
+          "new_rating_red": 1003,
+          "new_rating_white": 969,
+          "change_red": 19,
+          "change_white": -16
+        }
+      ],
+      "driver_name": "Dawson",
+      "team_name": "Robotanists",
+      "weight_class": "Beetleweights",
+      "present": false,
+      "image": "/static/uploads/1757681806744_shrubert_transp.png"
+    },
+    "Kansei Dorifto": {
+      "rating": 1000,
+      "matches": [],
+      "driver_name": "Dan",
+      "team_name": "Idle Hands",
+      "weight_class": "Beetleweights",
+      "present": true,
+      "image": "/static/uploads/1757916835445_kanseiplain.png"
+    },
+    "Anubis": {
+      "rating": 983,
+      "matches": [
+        {
+          "match_id": 9,
+          "timestamp": 1757916309,
+          "red_corner": "Anubis",
+          "white_corner": "Charity Case",
+          "result": "White wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 984,
+          "new_rating_red": 983,
+          "new_rating_white": 1004,
+          "change_red": -17,
+          "change_white": 20
+        }
+      ],
+      "driver_name": "Anthony",
+      "team_name": "Seraph",
+      "weight_class": "Beetleweights",
+      "present": false,
+      "image": "/static/uploads/1757915933327_Anubis_transp.png"
+    },
+    "Charity Case": {
+      "rating": 989,
+      "matches": [
+        {
+          "match_id": 8,
+          "timestamp": 1757916280,
+          "red_corner": "Ipseity",
+          "white_corner": "Charity Case",
+          "result": "Red wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1000,
+          "new_rating_red": 1019,
+          "new_rating_white": 984,
+          "change_red": 19,
+          "change_white": -16
+        },
+        {
+          "match_id": 9,
+          "timestamp": 1757916309,
+          "red_corner": "Anubis",
+          "white_corner": "Charity Case",
+          "result": "White wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 984,
+          "new_rating_red": 983,
+          "new_rating_white": 1004,
+          "change_red": -17,
+          "change_white": 20
+        },
+        {
+          "match_id": 10,
+          "timestamp": 1757916350,
+          "red_corner": "Ipseity",
+          "white_corner": "Charity Case",
+          "result": "Red wins KO",
+          "old_rating_red": 1019,
+          "old_rating_white": 1004,
+          "new_rating_red": 1038,
+          "new_rating_white": 989,
+          "change_red": 19,
+          "change_white": -15
+        }
+      ],
+      "driver_name": "Charity Case",
+      "team_name": "Don Valley Lynx",
+      "weight_class": "Beetleweights",
+      "present": false,
+      "image": "/static/uploads/1757916149520_Charity_Case_transp.png"
+    },
+    "Ipseity": {
+      "rating": 1038,
+      "matches": [
+        {
+          "match_id": 8,
+          "timestamp": 1757916280,
+          "red_corner": "Ipseity",
+          "white_corner": "Charity Case",
+          "result": "Red wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1000,
+          "new_rating_red": 1019,
+          "new_rating_white": 984,
+          "change_red": 19,
+          "change_white": -16
+        },
+        {
+          "match_id": 10,
+          "timestamp": 1757916350,
+          "red_corner": "Ipseity",
+          "white_corner": "Charity Case",
+          "result": "Red wins KO",
+          "old_rating_red": 1019,
+          "old_rating_white": 1004,
+          "new_rating_red": 1038,
+          "new_rating_white": 989,
+          "change_red": 19,
+          "change_white": -15
+        }
+      ],
+      "driver_name": "William",
+      "team_name": "Ghost",
+      "weight_class": "Beetleweights",
+      "present": true,
+      "image": "/static/uploads/1757916184106_Ipseity_transp.png"
+    },
+    "Pizzabot": {
+      "rating": 1000,
+      "matches": [],
+      "driver_name": "Autumn",
+      "team_name": "Capybara Biggus Piggus",
+      "weight_class": "Beetleweights",
+      "present": true,
+      "image": "/static/uploads/1757920758914_pizzabot_transp.png"
+    },
+    "Thunderbird": {
+      "rating": 1000,
+      "matches": [],
+      "driver_name": "Leo",
+      "team_name": "Ping Industries",
+      "weight_class": "Beetleweights",
+      "present": true,
+      "image": "/static/uploads/1757920941973_thunderbird_transp.png"
+    },
+    "Orders From the House (You're the Only Place That Feels like Home)": {
+      "rating": 1000,
+      "matches": [],
+      "driver_name": "William",
+      "team_name": "Ghost",
+      "weight_class": "Beetleweights",
+      "present": true,
+      "image": "/static/uploads/1757921064528_orders_from_the_house_transp.png"
+    }
+  },
+  "history": [
+    {
+      "match_id": 1,
+      "timestamp": 1757719409,
+      "red_corner": "Shrubert",
+      "white_corner": "Vortex",
+      "result": "White wins KO",
+      "old_rating_red": 1000,
+      "old_rating_white": 1000,
+      "new_rating_red": 984,
+      "new_rating_white": 1019,
+      "change_red": -16,
+      "change_white": 19
+    },
+    {
+      "match_id": 5,
+      "timestamp": 1757720811,
+      "red_corner": "NV (Easiest Thing in The World)",
+      "white_corner": "Vortex",
+      "result": "White wins KO",
+      "old_rating_red": 1000,
+      "old_rating_white": 1019,
+      "new_rating_red": 985,
+      "new_rating_white": 1037,
+      "change_red": -15,
+      "change_white": 18
+    },
+    {
+      "match_id": 6,
+      "timestamp": 1757721944,
+      "red_corner": "Shrubert",
+      "white_corner": "NV (Easiest Thing in The World)",
+      "result": "Red wins KO",
+      "old_rating_red": 984,
+      "old_rating_white": 985,
+      "new_rating_red": 1003,
+      "new_rating_white": 969,
+      "change_red": 19,
+      "change_white": -16
+    },
+    {
+      "match_id": 8,
+      "timestamp": 1757916280,
+      "red_corner": "Ipseity",
+      "white_corner": "Charity Case",
+      "result": "Red wins KO",
+      "old_rating_red": 1000,
+      "old_rating_white": 1000,
+      "new_rating_red": 1019,
+      "new_rating_white": 984,
+      "change_red": 19,
+      "change_white": -16
+    },
+    {
+      "match_id": 9,
+      "timestamp": 1757916309,
+      "red_corner": "Anubis",
+      "white_corner": "Charity Case",
+      "result": "White wins KO",
+      "old_rating_red": 1000,
+      "old_rating_white": 984,
+      "new_rating_red": 983,
+      "new_rating_white": 1004,
+      "change_red": -17,
+      "change_white": 20
+    },
+    {
+      "match_id": 10,
+      "timestamp": 1757916350,
+      "red_corner": "Ipseity",
+      "white_corner": "Charity Case",
+      "result": "Red wins KO",
+      "old_rating_red": 1019,
+      "old_rating_white": 1004,
+      "new_rating_red": 1038,
+      "new_rating_white": 989,
+      "change_red": 19,
+      "change_white": -15
+    }
+  ],
+  "next_match_id": 11,
+  "settings": {
+    "K": 32,
+    "ko_weight": 1.1
+  }
+}

@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block body %}
+  <div class="page-title">Schedule</div>
+
+  <div class="grid grid-2">
+    <!-- Left Column -->
+    <div class="panel">
+      <h3 style="color:#e53935;margin:4px 0 8px">Robot Presence</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Weight</th>
+            <th>Robot</th>
+            <th class="center">Present</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in presence %}
+            <tr>
+              <td>{{ row.weight }}</td>
+              <td>{{ row.robot }}</td>
+              <td class="center">{{ row.present }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <hr class="sep">
+
+      <form method="post" action="/schedule/generate" class="grid grid-2">
+        <label>
+          Matches / Robot
+          <input type="number" name="matchesPerRobot" value="1" min="1" max="10">
+        </label>
+        <label>
+          Interleave Classes
+          <select name="interleave">
+            <option value="1" selected>Yes</option>
+            <option value="0">No</option>
+          </select>
+        </label>
+        <button class="btn btn-green" type="submit">Generate</button>
+      </form>
+
+      <form method="post" action="/schedule/clear" style="margin-top:8px">
+        <button class="btn btn-red" type="submit">Clear</button>
+      </form>
+    </div>
+
+    <!-- Right Column -->
+    <div class="panel">
+      <h3 style="color:#e53935;margin:4px 0 8px">Manual Add Fight</h3>
+
+      <form method="post" action="{{ url_for('schedule_add') }}" class="form-grid" style="display:grid;gap:10px;grid-template-columns:1fr 1fr;">
+        <div class="form-row" style="display:flex;flex-direction:column;gap:6px;">
+          <label for="wc"><strong>Weight class</strong></label>
+          <select id="wc" name="wc" required>
+            {% for wc in weight_classes %}
+              <option value="{{ wc }}">{{ wc }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-row" style="display:flex;flex-direction:column;gap:6px;">
+          <label for="position"><strong>Position</strong></label>
+          <select id="position" name="position">
+            <option value="top">Top of queue</option>
+            <option value="bottom" selected>Bottom of queue</option>
+          </select>
+        </div>
+
+        <div class="form-row" style="grid-column:1/-1;display:grid;gap:10px;grid-template-columns:1fr 1fr;">
+          <label style="display:flex;flex-direction:column;gap:6px;">
+            <strong>Red Corner</strong>
+            <input id="red" name="red" type="text" placeholder="Robot name" required>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;">
+            <strong>White Corner</strong>
+            <input id="white" name="white" type="text" placeholder="Robot name" required>
+          </label>
+        </div>
+
+        <div class="form-row" style="grid-column:1/-1;">
+          <button class="btn btn-green" type="submit">Add Fight</button>
+        </div>
+      </form>
+
+      <p class="muted" style="margin-top:6px;">
+        Tip: robot names are matched (case-insensitive) to existing robots when possible; otherwise, free-form names are accepted.
+      </p>
+    </div>
+
+    <!-- Full-width: Tonight's Schedule -->
+    <div class="panel" style="grid-column:1/-1;">
+      <h3 style="color:#e53935;margin:4px 0 8px">Tonight's Schedule</h3>
+      <table>
+        <thead>
+          <tr>
+            <th class="center">#</th>
+            <th class="center">Weight</th>
+            <th>Red</th>
+            <th>White</th>
+            <th class="right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in schedule %}
+            <tr>
+              <td class="center">{{ loop.index }}</td>
+              <td class="center">{{ m.weight_class }}</td>
+              <td>{{ m.red }}</td>
+              <td>{{ m.white }}</td>
+              <td class="right">
+                <form method="post" action="/schedule/move" style="display:inline-block">
+                  <input type="hidden" name="index" value="{{ loop.index0 }}">
+                  <input type="hidden" name="direction" value="-1">
+                  <button class="btn" type="submit">Move Up</button>
+                </form>
+                <form method="post" action="/schedule/move" style="display:inline-block">
+                  <input type="hidden" name="index" value="{{ loop.index0 }}">
+                  <input type="hidden" name="direction" value="1">
+                  <button class="btn" type="submit">Move Down</button>
+                </form>
+                <form method="post" action="/schedule/delete" style="display:inline-block">
+                  <input type="hidden" name="index" value="{{ loop.index0 }}">
+                  <button class="btn btn-red" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Footer Controls -->
+  <div class="footer">
+    <div class="row">
+      <span class="badge">
+        {% if top %}
+          Top: {{ top.red }} vs {{ top.white }} ({{ top.weight_class }})
+        {% else %}
+          Schedule empty
+        {% endif %}
+      </span>
+
+      <form method="post" action="/submit_match" style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
+        <input type="hidden" name="popFromSchedule" value="1">
+        <label>Class
+          <select name="wc">
+            {% for w in weight_classes %}
+              <option value="{{ w }}" {% if top and w == top.weight_class %}selected{% endif %}>{{ w }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>Red <input name="red" value="{{ top.red if top else '' }}"></label>
+        <label>White <input name="white" value="{{ top.white if top else '' }}"></label>
+        <label>Result
+          <select name="result">
+            <option>Red wins JD</option>
+            <option>Red wins KO</option>
+            <option>White wins JD</option>
+            <option>White wins KO</option>
+            <option>Draw</option>
+          </select>
+        </label>
+        <button class="btn btn-red" type="submit">Submit Match</button>
+      </form>
+
+      <form method="post" action="/schedule/undo">
+        <label>Undo Class
+          <select name="wc">
+            {% for w in weight_classes %}
+              <option value="{{ w }}">{{ w }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <button class="btn" type="submit">Undo Last Match</button>
+      </form>
+
+      <a class="btn btn-green" href="/overlay" target="_blank">Overlay JSON</a>
+    </div>
+  </div>
+{% endblock %}

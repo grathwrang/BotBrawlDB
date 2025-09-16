@@ -1,0 +1,223 @@
+{
+  "robots": {
+    "Homer": {
+      "rating": 1000,
+      "matches": [],
+      "driver_name": "Dan",
+      "team_name": "Idle Hands",
+      "weight_class": "Sumos",
+      "present": true,
+      "image": "/static/uploads/1757682172982_Homer.png"
+    },
+    "Cones of Dunshire": {
+      "rating": 1000,
+      "matches": [],
+      "driver_name": "Kai",
+      "team_name": "Team Crab",
+      "weight_class": "Sumos",
+      "present": false
+    },
+    "Dispatchula": {
+      "rating": 1056,
+      "matches": [
+        {
+          "match_id": 6,
+          "timestamp": 1757918218,
+          "red_corner": "Dispatchula",
+          "white_corner": "Whammo Can & Driveway Hero",
+          "result": "Red wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1019,
+          "new_rating_red": 1020,
+          "new_rating_white": 1002,
+          "change_red": 20,
+          "change_white": -17
+        },
+        {
+          "match_id": 7,
+          "timestamp": 1757918251,
+          "red_corner": "Bort",
+          "white_corner": "Dispatchula",
+          "result": "White wins KO",
+          "old_rating_red": 984,
+          "old_rating_white": 1020,
+          "new_rating_red": 970,
+          "new_rating_white": 1038,
+          "change_red": -14,
+          "change_white": 18
+        },
+        {
+          "match_id": 8,
+          "timestamp": 1757918279,
+          "red_corner": "Dispatchula",
+          "white_corner": "Whammo Can & Driveway Hero",
+          "result": "Red wins KO",
+          "old_rating_red": 1038,
+          "old_rating_white": 1002,
+          "new_rating_red": 1056,
+          "new_rating_white": 988,
+          "change_red": 18,
+          "change_white": -14
+        }
+      ],
+      "driver_name": "Garrett",
+      "team_name": "Botshed Robotics",
+      "weight_class": "Sumos",
+      "present": true,
+      "image": "/static/uploads/1757918047722_Dispatchula_transp.png"
+    },
+    "Bort": {
+      "rating": 970,
+      "matches": [
+        {
+          "match_id": 5,
+          "timestamp": 1757918187,
+          "red_corner": "Bort",
+          "white_corner": "Whammo Can & Driveway Hero",
+          "result": "White wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1000,
+          "new_rating_red": 984,
+          "new_rating_white": 1019,
+          "change_red": -16,
+          "change_white": 19
+        },
+        {
+          "match_id": 7,
+          "timestamp": 1757918251,
+          "red_corner": "Bort",
+          "white_corner": "Dispatchula",
+          "result": "White wins KO",
+          "old_rating_red": 984,
+          "old_rating_white": 1020,
+          "new_rating_red": 970,
+          "new_rating_white": 1038,
+          "change_red": -14,
+          "change_white": 18
+        }
+      ],
+      "driver_name": "Veronica",
+      "team_name": "Don Valley Lynx",
+      "weight_class": "Sumos",
+      "present": false,
+      "image": "/static/uploads/1757918102279_bort_transp.png"
+    },
+    "Whammo Can & Driveway Hero": {
+      "rating": 988,
+      "matches": [
+        {
+          "match_id": 5,
+          "timestamp": 1757918187,
+          "red_corner": "Bort",
+          "white_corner": "Whammo Can & Driveway Hero",
+          "result": "White wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1000,
+          "new_rating_red": 984,
+          "new_rating_white": 1019,
+          "change_red": -16,
+          "change_white": 19
+        },
+        {
+          "match_id": 6,
+          "timestamp": 1757918218,
+          "red_corner": "Dispatchula",
+          "white_corner": "Whammo Can & Driveway Hero",
+          "result": "Red wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1019,
+          "new_rating_red": 1020,
+          "new_rating_white": 1002,
+          "change_red": 20,
+          "change_white": -17
+        },
+        {
+          "match_id": 8,
+          "timestamp": 1757918279,
+          "red_corner": "Dispatchula",
+          "white_corner": "Whammo Can & Driveway Hero",
+          "result": "Red wins KO",
+          "old_rating_red": 1038,
+          "old_rating_white": 1002,
+          "new_rating_red": 1056,
+          "new_rating_white": 988,
+          "change_red": 18,
+          "change_white": -14
+        }
+      ],
+      "driver_name": "Garrett",
+      "team_name": "Botshed Robotics",
+      "weight_class": "Sumos",
+      "present": true,
+      "image": "/static/uploads/1757918121341_Whammo_Can_and_Driveway_Hero_transp.png"
+    },
+    "Jimmy Neutrons Hot Mom (Judy)": {
+      "rating": 1000,
+      "matches": [],
+      "driver_name": "Autumn",
+      "team_name": "Capybara Biggus Piggus",
+      "weight_class": "Sumos",
+      "present": true,
+      "image": "/static/uploads/1757921091847_Judy_transp.png"
+    }
+  },
+  "history": [
+    {
+      "match_id": 5,
+      "timestamp": 1757918187,
+      "red_corner": "Bort",
+      "white_corner": "Whammo Can & Driveway Hero",
+      "result": "White wins KO",
+      "old_rating_red": 1000,
+      "old_rating_white": 1000,
+      "new_rating_red": 984,
+      "new_rating_white": 1019,
+      "change_red": -16,
+      "change_white": 19
+    },
+    {
+      "match_id": 6,
+      "timestamp": 1757918218,
+      "red_corner": "Dispatchula",
+      "white_corner": "Whammo Can & Driveway Hero",
+      "result": "Red wins KO",
+      "old_rating_red": 1000,
+      "old_rating_white": 1019,
+      "new_rating_red": 1020,
+      "new_rating_white": 1002,
+      "change_red": 20,
+      "change_white": -17
+    },
+    {
+      "match_id": 7,
+      "timestamp": 1757918251,
+      "red_corner": "Bort",
+      "white_corner": "Dispatchula",
+      "result": "White wins KO",
+      "old_rating_red": 984,
+      "old_rating_white": 1020,
+      "new_rating_red": 970,
+      "new_rating_white": 1038,
+      "change_red": -14,
+      "change_white": 18
+    },
+    {
+      "match_id": 8,
+      "timestamp": 1757918279,
+      "red_corner": "Dispatchula",
+      "white_corner": "Whammo Can & Driveway Hero",
+      "result": "Red wins KO",
+      "old_rating_red": 1038,
+      "old_rating_white": 1002,
+      "new_rating_red": 1056,
+      "new_rating_white": 988,
+      "change_red": 18,
+      "change_white": -14
+    }
+  ],
+  "next_match_id": 9,
+  "settings": {
+    "K": 32,
+    "ko_weight": 1.1
+  }
+}

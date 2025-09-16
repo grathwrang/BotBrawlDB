@@ -1,0 +1,37 @@
+<div class="info-grid">
+  <div>
+    <div><span class="info-label">Robot Name:</span> <span class="info-value">{{ name }}</span></div>
+    <div><span class="info-label">Weight Class:</span> <span class="info-value">{{ wc }}</span></div>
+    <div><span class="info-label">Driver Name:</span> <span class="info-value">{{ info.get('driver_name','') }}</span></div>
+    <div><span class="info-label">Team Name:</span> <span class="info-value">{{ info.get('team_name','') }}</span></div>
+    <div><span class="info-label">Current Elo:</span> <span class="info-value">{{ info.get('rating',1000) }}</span></div>
+    <div><span class="info-label">Number of Matches:</span> <span class="info-value">{{ (info.get('matches') or []) | length }}</span></div>
+    <div><span class="info-label">Present:</span> <span class="info-value">{{ 'Yes' if info.get('present') else 'No' }}</span></div>
+  </div>
+  <div></div>
+  <div>{% if info.get('image') %}<img class="card-image" src="{{ info.get('image') }}" alt="robot image">{% endif %}</div>
+</div>
+<h3 style="color:#e53935;margin:10px 0 8px">Recent Matches</h3>
+<table>
+  <thead><tr><th>Date</th><th>Opponent</th><th>Result</th><th class="center">Old</th><th class="center">New</th><th class="center">Δ</th><th class="center">Match_ID</th></tr></thead>
+  <tbody>
+    {% for m in matches %}
+      {% set robot_is_red = (m['red_corner'] == name) %}
+      {% if m['result'] == 'Draw' %}{% set res_display = 'draw' %}
+      {% else %}
+        {% if robot_is_red %}{% set mapping = {'Red wins JD':'win JD','Red wins KO':'win KO','White wins JD':'loss JD','White wins KO':'loss KO'} %}
+        {% else %}{% set mapping = {'White wins JD':'win JD','White wins KO':'win KO','Red wins JD':'loss JD','Red wins KO':'loss KO'} %}{% endif %}
+        {% set res_display = mapping.get(m['result'], m['result']) %}
+      {% endif %}
+      <tr>
+        <td>{{ m['timestamp'] | int | datetimefromts }}</td>
+        <td>{{ m['white_corner'] if robot_is_red else m['red_corner'] }}</td>
+        <td>{{ res_display }}</td>
+        <td class="center">{{ m['old_rating_red'] if robot_is_red else m['old_rating_white'] }}</td>
+        <td class="center">{{ m['new_rating_red'] if robot_is_red else m['new_rating_white'] }}</td>
+        <td class="center">{{ m['change_red'] if robot_is_red else m['change_white'] }}</td>
+        <td class="center">{{ m['match_id'] }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
