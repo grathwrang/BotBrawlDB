@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% block body %}
+  
+
+  
+  <div class="panel" style="margin-bottom:12px">
+    <h3 style="margin:6px 0 10px;color:#e53935">Now</h3>
+    <div id="nowContent" class="grid grid-3">
+      <div>
+        <div class="name-cell" style="font-size:22px"><span id="nowRedName">—</span></div>
+        <div class="small" id="nowRedMeta"></div>
+      </div>
+      <div class="center" style="align-self:center"><span class="badge" id="nowWC">—</span></div>
+      <div class="right">
+        <div class="name-cell" style="font-size:22px"><span id="nowWhiteName">—</span></div>
+        <div class="small" id="nowWhiteMeta"></div>
+      </div>
+    </div>
+    <p class="small" id="nowStatus" style="margin-top:8px;color:#aaa">Waiting for /overlay…</p>
+  </div>
+
+  
+  <div class="panel">
+    <form id="judgingForm" method="post" action="/submit_match" style="display:flex;flex-direction:column;gap:12px">
+      <input type="hidden" name="wc" id="wcInput">
+      <input type="hidden" name="red" id="redInput">
+      <input type="hidden" name="white" id="whiteInput">
+      <input type="hidden" name="result" id="resultInput">
+
+      <!-- Hidden inputs to persist category breakdown -->
+      <input type="hidden" name="jd_aggr_r" id="jd_aggr_r">
+      <input type="hidden" name="jd_aggr_w" id="jd_aggr_w">
+      <input type="hidden" name="jd_ctrl_r" id="jd_ctrl_r">
+      <input type="hidden" name="jd_ctrl_w" id="jd_ctrl_w">
+      <input type="hidden" name="jd_dmg_r" id="jd_dmg_r">
+      <input type="hidden" name="jd_dmg_w" id="jd_dmg_w">
+
+      <!-- Default: pop this match from schedule -->
+      <input type="hidden" name="popFromSchedule" id="popFromSchedule" value="1">
+
+      <!-- Slides -->
+      <div id="slides">
+        <!-- Aggression -->
+        <div class="slide" data-step="1" style="display:block">
+          <h3 style="margin:4px 0 8px;color:#e53935">Aggression (5 pts, no ties)</h3>
+          <p class="small">Award a split that sums to 5 and does not tie. Examples: 5–0, 4–1, 3–2.</p>
+          <div class="grid grid-3">
+            <div>
+              <div class="badge">Give to Red</div>
+              <div class="buttons" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px">
+                <button type="button" class="chip" data-cat="aggr" data-r="5" data-w="0">5–0</button>
+                <button type="button" class="chip" data-cat="aggr" data-r="4" data-w="1">4–1</button>
+                <button type="button" class="chip" data-cat="aggr" data-r="3" data-w="2">3–2</button>
+              </div>
+            </div>
+            <div class="center" style="align-self:center">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="info-label">Red</div><div id="aggrRed" class="info-value">–</div>
+                <div class="info-label">White</div><div id="aggrWhite" class="info-value">–</div>
+              </div>
+            </div>
+            <div class="right">
+              <div class="badge">Give to White</div>
+              <div class="buttons" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end">
+                <button type="button" class="chip" data-cat="aggr" data-r="0" data-w="5">0–5</button>
+                <button type="button" class="chip" data-cat="aggr" data-r="1" data-w="4">1–4</button>
+                <button type="button" class="chip" data-cat="aggr" data-r="2" data-w="3">2–3</button>
+              </div>
+            </div>
+          </div>
+          <div class="right" style="margin-top:10px">
+            <button type="button" class="btn btn-green next">Next: Control</button>
+          </div>
+        </div>
+
+        <!-- Control -->
+        <div class="slide" data-step="2" style="display:none">
+          <h3 style="margin:4px 0 8px;color:#e53935">Control (6 pts)</h3>
+          <p class="small">Award a split that sums to 6 (ties allowed). Examples: 6–0, 5–1, 4–2, 3–3.</p>
+          <div class="grid grid-3">
+            <div>
+              <div class="badge">Give to Red</div>
+              <div class="buttons" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px">
+                <button type="button" class="chip" data-cat="ctrl" data-r="6" data-w="0">6–0</button>
+                <button type="button" class="chip" data-cat="ctrl" data-r="5" data-w="1">5–1</button>
+                <button type="button" class="chip" data-cat="ctrl" data-r="4" data-w="2">4–2</button>
+              </div>
+            </div>
+            <div class="center" style="align-self:center">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="info-label">Red</div><div id="ctrlRed" class="info-value">–</div>
+                <div class="info-label">White</div><div id="ctrlWhite" class="info-value">–</div>
+              </div>
+              <div class="buttons" style="margin-top:8px;display:flex;justify-content:center;gap:8px">
+                <button type="button" class="chip" data-cat="ctrl" data-r="3" data-w="3">3–3</button>
+              </div>
+            </div>
+            <div class="right">
+              <div class="badge">Give to White</div>
+              <div class="buttons" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end">
+                <button type="button" class="chip" data-cat="ctrl" data-r="0" data-w="6">0–6</button>
+                <button type="button" class="chip" data-cat="ctrl" data-r="1" data-w="5">1–5</button>
+                <button type="button" class="chip" data-cat="ctrl" data-r="2" data-w="4">2–4</button>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="display:flex;justify-content:space-between;margin-top:10px">
+            <button type="button" class="btn prev">Back</button>
+            <button type="button" class="btn btn-green next">Next: Damage</button>
+          </div>
+        </div>
+
+        <!-- Damage -->
+        <div class="slide" data-step="3" style="display:none">
+          <h3 style="margin:4px 0 8px;color:#e53935">Damage (8 pts)</h3>
+          <p class="small">Award a split that sums to 8 (ties allowed). Examples: 8–0, 7–1, 6–2, 5–3, 4–4.</p>
+          <div class="grid grid-3">
+            <div>
+              <div class="badge">Give to Red</div>
+              <div class="buttons" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px">
+                <button type="button" class="chip" data-cat="dmg" data-r="8" data-w="0">8–0</button>
+                <button type="button" class="chip" data-cat="dmg" data-r="7" data-w="1">7–1</button>
+                <button type="button" class="chip" data-cat="dmg" data-r="6" data-w="2">6–2</button>
+                <button type="button" class="chip" data-cat="dmg" data-r="5" data-w="3">5–3</button>
+              </div>
+            </div>
+            <div class="center" style="align-self:center">
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="info-label">Red</div><div id="dmgRed" class="info-value">–</div>
+                <div class="info-label">White</div><div id="dmgWhite" class="info-value">–</div>
+              </div>
+              <div class="buttons" style="margin-top:8px;display:flex;justify-content:center;gap:8px">
+                <button type="button" class="chip" data-cat="dmg" data-r="4" data-w="4">4–4</button>
+              </div>
+            </div>
+            <div class="right">
+              <div class="badge">Give to White</div>
+              <div class="buttons" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end">
+                <button type="button" class="chip" data-cat="dmg" data-r="0" data-w="8">0–8</button>
+                <button type="button" class="chip" data-cat="dmg" data-r="1" data-w="7">1–7</button>
+                <button type="button" class="chip" data-cat="dmg" data-r="2" data-w="6">2–6</button>
+                <button type="button" class="chip" data-cat="dmg" data-r="3" data-w="5">3–5</button>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="display:flex;justify-content:space-between;margin-top:10px">
+            <button type="button" class="btn prev">Back</button>
+            <button type="button" class="btn btn-green next">Review & Submit</button>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="slide" data-step="4" style="display:none">
+          <h3 style="margin:4px 0 8px;color:#e53935">Summary & Submit</h3>
+          <div class="grid grid-3">
+            <div>
+              <div class="info-label">Red Total</div>
+              <div id="redTotal" class="info-value" style="font-size:18px;font-weight:bold">–</div>
+            </div>
+            <div class="center" style="align-self:center">
+              <div id="winner" class="badge" style="font-size:16px;padding:8px 16px">–</div>
+            </div>
+            <div class="right">
+              <div class="info-label">White Total</div>
+              <div id="whiteTotal" class="info-value" style="font-size:18px;font-weight:bold">–</div>
+            </div>
+          </div>
+          
+          <div style="margin:16px 0;padding:12px;background:#1a1c1f;border:1px solid #2a2e33;border-radius:6px">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+              <div><strong>Aggression</strong></div>
+              <div><strong>Control</strong></div>
+              <div><strong>Damage</strong></div>
+              <div><span id="summaryAggrRed">–</span>–<span id="summaryAggrWhite">–</span></div>
+              <div><span id="summaryCtrlRed">–</span>–<span id="summaryCtrlWhite">–</span></div>
+              <div><span id="summaryDmgRed">–</span>–<span id="summaryDmgWhite">–</span></div>
+            </div>
+          </div>
+
+          <div class="row" style="display:flex;justify-content:space-between;margin-top:16px">
+            <button type="button" class="btn prev">Back</button>
+            <button type="submit" class="btn btn-red" style="font-size:16px;padding:10px 20px">Submit Result</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script src="{{ url_for('static', filename='judging.js') }}"></script>
+{% endblock %}

@@ -14,6 +14,7 @@
       <a href="{{ url_for('index', wc='Beetleweights') }}" class="{{ 'active' if request.path=='/' and request.args.get('wc')=='Beetleweights' else '' }}">Beetleweights</a>
       <a href="{{ url_for('index', wc='Sumos') }}" class="{{ 'active' if request.path=='/' and request.args.get('wc')=='Sumos' else '' }}">Sumos</a>
       <a href="{{ url_for('schedule') }}" class="{{ 'active' if request.path.startswith('/schedule') else '' }}">Schedule</a>
+      <a href="{{ url_for('judging') }}" class="{{ 'active' if request.path=='/Judging' else '' }}">Judging</a>
 
     </div>
     {% block body %}{% endblock %}

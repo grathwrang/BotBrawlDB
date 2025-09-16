@@ -409,6 +409,10 @@ def debug_robots(wc):
 
 # ---------------- Public pages ----------------
 
+@app.get("/Judging")
+def judging():
+    return render_template("judging.html")
+
 @app.get("/SchedulePublic")
 def schedule_public():
     sched = load_schedule().get("list", [])
