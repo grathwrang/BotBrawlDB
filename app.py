@@ -211,7 +211,17 @@ def robot_delete():
     db = load_db(wc)
     if name in db.get("robots", {}):
         del db["robots"][name]
-        db["history"]=[m for m in db.get("history",[]) if m.get("red_corner")!=name and m.get("white_corner")!=name]
+        db["history"] = [
+            m
+            for m in db.get("history", [])
+            if m.get("red_corner") != name and m.get("white_corner") != name
+        ]
+        for robot in db.get("robots", {}).values():
+            matches = robot.get("matches", []) or []
+            robot["matches"] = [
+                m for m in matches
+                if m.get("red_corner") != name and m.get("white_corner") != name
+            ]
         save_db(wc, db)
     return redirect(url_for("index", wc=wc))
 
