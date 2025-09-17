@@ -22,6 +22,12 @@
   </div>
   {% endif %}
 
+  <div style="margin-bottom:12px">
+    {% with panel=judge_panel, view='public', category_specs=category_specs, judge_labels=judge_labels %}
+      {% include "_judge_panel.html" %}
+    {% endwith %}
+  </div>
+
   <div class="panel">
     <h3 style="margin:6px 0 10px;color:#e53935">Tonight's Schedule</h3>
     <table>

@@ -1,0 +1,120 @@
+{% extends "judge_base.html" %}
+{% block body %}
+  <div class="page-title">{{ judge_label }}</div>
+
+  {% if current %}
+  <div class="panel judge-current">
+    <div class="judge-fight-card">
+      <div class="judge-robot judge-robot-red">
+        {% if current.red_details.image %}
+          <img src="{{ current.red_details.image }}" alt="{{ current.red_details.name }}" class="judge-robot-image">
+        {% endif %}
+        <div class="judge-robot-name">{{ current.red_details.name }}</div>
+        <div class="small">{{ current.red_details.driver }}{% if current.red_details.team %} — {{ current.red_details.team }}{% endif %}</div>
+        <div class="small">Elo {{ current.red_details.rating or '—' }} · W-L-D {{ current.red_details.wins }}-{{ current.red_details.losses }}-{{ current.red_details.draws }}</div>
+      </div>
+      <div class="judge-fight-info">
+        <span class="badge">{{ current.weight_class }}</span>
+        <div class="judge-vs">VS</div>
+        <div class="small">{{ current.headline }}</div>
+      </div>
+      <div class="judge-robot judge-robot-white">
+        {% if current.white_details.image %}
+          <img src="{{ current.white_details.image }}" alt="{{ current.white_details.name }}" class="judge-robot-image">
+        {% endif %}
+        <div class="judge-robot-name">{{ current.white_details.name }}</div>
+        <div class="small">{{ current.white_details.driver }}{% if current.white_details.team %} — {{ current.white_details.team }}{% endif %}</div>
+        <div class="small">Elo {{ current.white_details.rating or '—' }} · W-L-D {{ current.white_details.wins }}-{{ current.white_details.losses }}-{{ current.white_details.draws }}</div>
+      </div>
+    </div>
+
+    <div class="judge-controls" data-match-id="{{ current.match_id }}" data-judge-id="{{ judge_id }}">
+      <p class="small">Use the sliders to allocate points to the <strong>Red</strong> and <strong>White</strong> corners.</p>
+      <div class="judge-slider-grid">
+        {% for spec in categories %}
+        {% set slider = current.existing_submission.sliders[spec.key] if current.existing_submission and current.existing_submission.sliders is defined and spec.key in current.existing_submission.sliders else (spec.max // 2) %}
+        <div class="judge-slider" data-key="{{ spec.key }}" data-max="{{ spec.max }}">
+          <div class="judge-slider-header">
+            <span>{{ spec.label }}</span>
+            <span class="small">Max {{ spec.max }} pts</span>
+          </div>
+          <div class="judge-slider-input">
+            <span class="slider-label white">{{ current.white_details.name }}</span>
+            <input type="range" min="0" max="{{ spec.max }}" step="1" value="{{ slider }}">
+            <span class="slider-label red">{{ current.red_details.name }}</span>
+          </div>
+          <div class="judge-slider-values">
+            <span class="white" data-white-points>0</span>
+            <span class="small">Points</span>
+            <span class="red" data-red-points>0</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="judge-score-summary">
+        <div>Red Total: <span class="red" data-total-red>0</span></div>
+        <div>White Total: <span class="white" data-total-white>0</span></div>
+        <div>Outcome Preview: <span data-outcome>Waiting</span></div>
+      </div>
+      <div class="judge-actions">
+        <button class="btn btn-green" id="judge-submit">Submit Card</button>
+        <span class="small" id="judge-status"></span>
+      </div>
+    </div>
+
+    {% if current.judges %}
+    <div class="judge-other-cards">
+      <h3>Submitted Cards</h3>
+      <ul>
+        {% for card in current.judges %}
+        <li>
+          <strong>{{ judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id) }}:</strong>
+          {{ card.scoreline }} — {{ card.breakdown }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+  {% else %}
+  <div class="panel">
+    <p class="muted">No fight assigned to score at the moment. Waiting for the next match.</p>
+  </div>
+  {% endif %}
+
+  <div class="panel judge-history">
+    <h3>Previous Matches</h3>
+    {% if history %}
+      <div class="judge-history-list">
+        {% for match in history %}
+        <details class="judge-history-item">
+          <summary>
+            <div class="history-summary">
+              <span class="name">{{ match.red }} vs {{ match.white }}</span>
+              <span class="badge">{{ match.weight_class }}</span>
+            </div>
+            <div class="small">{{ match.headline }}</div>
+          </summary>
+          <div class="history-body">
+            {% if match.completed_at %}
+            <div class="small">Completed {{ match.completed_at | datetimefromts }}</div>
+            {% endif %}
+            <ul>
+              {% for card in match.judges %}
+              <li><strong>{{ judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id) }}:</strong> {{ card.scoreline }} — {{ card.breakdown }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </details>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="muted">No judged matches yet.</p>
+    {% endif %}
+  </div>
+
+  <script>
+    window.JUDGE_PAGE_STATE = {{ judge_state_json | tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='judge.js') }}"></script>
+{% endblock %}

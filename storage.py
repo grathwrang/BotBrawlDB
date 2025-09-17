@@ -6,6 +6,7 @@ DB_FILES = {
     "Sumos": os.path.join(DATA_DIR, "elo_sumos.txt"),
 }
 SCHEDULE_FP = os.path.join(DATA_DIR, "schedule.json")
+JUDGING_FP = os.path.join(DATA_DIR, "judging.json")
 DEFAULT_RATING = 1000; DEFAULT_K = 32; KO_WEIGHT = 1.10
 def ensure_dirs(): os.makedirs(DATA_DIR, exist_ok=True)
 def _blank_db():
@@ -58,3 +59,30 @@ def save_schedule(sched):
     with os.fdopen(fd,"w",encoding="utf-8") as f:
         json.dump(sched,f,indent=2,ensure_ascii=False); f.flush(); os.fsync(f.fileno())
     os.replace(tmp, SCHEDULE_FP)
+
+def _blank_judging_state():
+    return {"current": None, "history": []}
+
+def load_judging_state():
+    ensure_dirs()
+    if not os.path.exists(JUDGING_FP):
+        state = _blank_judging_state()
+        save_judging_state(state)
+        return state
+    with open(JUDGING_FP, "r", encoding="utf-8") as f:
+        try:
+            data = json.load(f)
+            if not isinstance(data, dict):
+                return _blank_judging_state()
+            return data
+        except Exception:
+            return _blank_judging_state()
+
+def save_judging_state(state):
+    ensure_dirs()
+    fd, tmp = tempfile.mkstemp(prefix="._judging_", dir=DATA_DIR)
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        json.dump(state, f, indent=2, ensure_ascii=False)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp, JUDGING_FP)

@@ -78,3 +78,52 @@ dialog::backdrop{background:rgba(0,0,0,0.65)}
 
 .robot-link{cursor:pointer}
 .robot-link:hover{opacity:0.9}
+
+/* Judge pages */
+.judge-current{display:grid;gap:16px}
+.judge-fight-card{display:grid;grid-template-columns:1fr minmax(140px,180px) 1fr;gap:16px;align-items:center;background:var(--panel2);border:1px solid #2a2e33;border-radius:6px;padding:12px}
+.judge-robot{text-align:center;display:flex;flex-direction:column;gap:6px}
+.judge-robot-image{max-width:100%;max-height:220px;border-radius:6px;object-fit:cover;box-shadow:0 4px 12px rgba(0,0,0,0.35)}
+.judge-robot-name{font-family:'Bank Gothic','BankGothic Md BT',Michroma,'Eurostile','Square 721',sans-serif;font-size:24px}
+.judge-fight-info{text-align:center;display:flex;flex-direction:column;gap:6px;justify-content:center}
+.judge-vs{font-family:'Bank Gothic','BankGothic Md BT',Michroma,'Eurostile','Square 721',sans-serif;font-size:40px;color:var(--red)}
+
+.judge-controls{background:var(--panel2);border:1px solid #2a2e33;border-radius:6px;padding:12px;display:grid;gap:12px}
+.judge-slider-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.judge-slider{background:#1b1d21;border:1px solid #2a2e33;border-radius:6px;padding:10px;display:grid;gap:6px}
+.judge-slider-header{display:flex;align-items:center;justify-content:space-between;font-weight:600}
+.judge-slider-input{display:flex;align-items:center;gap:10px}
+.judge-slider-input input[type=range]{flex:1}
+.slider-label{font-weight:600;font-size:13px}
+.slider-label.red{color:var(--red)}
+.slider-label.white{color:var(--blue)}
+.judge-slider-values{display:flex;align-items:center;justify-content:space-between;font-weight:600;margin-top:4px}
+.judge-slider-values .red{color:var(--red)}
+.judge-slider-values .white{color:var(--blue)}
+.judge-score-summary{display:flex;gap:16px;align-items:center;background:#1b1d21;border:1px solid #2a2e33;border-radius:6px;padding:10px}
+.judge-score-summary .red{color:var(--red);font-weight:700}
+.judge-score-summary .white{color:var(--blue);font-weight:700}
+.judge-actions{display:flex;align-items:center;gap:12px}
+.judge-other-cards ul{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:4px}
+.judge-history{margin-top:16px}
+.judge-history-list{display:grid;gap:10px}
+.judge-history-item{background:var(--panel2);border:1px solid #2a2e33;border-radius:6px}
+.judge-history-item summary{cursor:pointer;list-style:none;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.judge-history-item summary::-webkit-details-marker{display:none}
+.judge-history-item .history-body{padding:10px 12px;border-top:1px solid #2a2e33}
+.history-summary{display:flex;align-items:center;gap:8px}
+.judge-history-item ul{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:4px}
+
+/* Judge panel shared styles */
+.judge-results-panel{background:var(--panel);border:1px solid #2a2e33;border-radius:6px;padding:10px}
+.judge-result-current{margin-bottom:10px;display:grid;gap:6px}
+.judge-card-list{list-style:none;padding:0;margin:6px 0 0;display:grid;gap:4px}
+.judge-history-list .judge-edit-form{background:#1b1d21;border:1px solid #2a2e33;border-radius:6px;padding:10px;margin-top:8px;display:grid;gap:8px}
+.judge-edit-grid{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.judge-edit-form input{width:100%}
+.judge-edit-forms{display:grid;gap:10px}
+
+@media (max-width: 900px){
+  .judge-fight-card{grid-template-columns:1fr;justify-items:center}
+  .judge-controls{order:3}
+}
