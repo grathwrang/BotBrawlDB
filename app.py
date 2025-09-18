@@ -12,6 +12,7 @@ from storage import (
     export_stats_csv,
     load_judging_state,
     save_judging_state,
+    update_judging_state,
 )
 from schedule_engine import generate
 from judging import (
@@ -565,19 +566,41 @@ def judge_submit(judge_id):
     data = request.get_json(silent=True) or {}
     sliders = data.get("sliders", {})
     match_id = data.get("match_id")
-    state, schedule_data, _ = get_synced_judging_state()
-    current = state.get("current") if isinstance(state, dict) else None
-    if not current:
-        return jsonify({"error": "No active match"}), 400
-    if match_id and match_id != current.get("match_id"):
-        return jsonify({"error": "Match has changed"}), 409
+    state, schedule_data, schedule_list = get_synced_judging_state()
+    judge_record = create_judge_record(judge_id, sliders)
 
-    current.setdefault("judges", {})[str(judge_id)] = create_judge_record(judge_id, sliders)
-    normalized_current, _ = normalize_match(current)
-    state["current"] = normalized_current
-    save_judging_state(state)
+    error_payload = {"error": "No active match"}
+    error_status = 400
 
-    summary = normalized_current.get("summary") if normalized_current else None
+    class StateUpdateAbort(Exception):
+        pass
+
+    def mutate_state(current_state):
+        nonlocal error_payload, error_status
+        current_state, _ = ensure_state_for_schedule(current_state, schedule_list)
+        current_match = current_state.get("current") if isinstance(current_state, dict) else None
+        if not current_match:
+            error_payload = {"error": "No active match"}
+            error_status = 400
+            raise StateUpdateAbort()
+        if match_id and match_id != current_match.get("match_id"):
+            error_payload = {"error": "Match has changed"}
+            error_status = 409
+            raise StateUpdateAbort()
+
+        judges = current_match.setdefault("judges", {})
+        judges[str(judge_id)] = judge_record
+        normalized_current, _ = normalize_match(current_match)
+        current_state["current"] = normalized_current
+        return current_state
+
+    try:
+        state = update_judging_state(mutate_state)
+    except StateUpdateAbort:
+        return jsonify(error_payload), error_status
+
+    current_match = state.get("current") if isinstance(state, dict) else None
+    summary = current_match.get("summary") if current_match else None
     if summary and summary.get("is_complete"):
         state, schedule_data = finalize_current_match(state, schedule_data)
 
