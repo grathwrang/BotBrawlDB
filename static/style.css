@@ -82,9 +82,9 @@ dialog::backdrop{background:rgba(0,0,0,0.65)}
 /* Judge pages */
 .judge-current{display:grid;gap:16px}
 .judge-fight-card{display:grid;grid-template-columns:1fr minmax(140px,180px) 1fr;gap:16px;align-items:center;background:var(--panel2);border:1px solid #2a2e33;border-radius:6px;padding:12px}
-.judge-robot{text-align:center;display:flex;flex-direction:column;gap:6px}
+.judge-robot{text-align:center;display:flex;flex-direction:column;gap:6px;min-width:0}
 .judge-robot-image{max-width:100%;max-height:220px;border-radius:6px;object-fit:cover;box-shadow:0 4px 12px rgba(0,0,0,0.35)}
-.judge-robot-name{font-family:'Bank Gothic','BankGothic Md BT',Michroma,'Eurostile','Square 721',sans-serif;font-size:24px}
+.judge-robot-name{font-family:'Bank Gothic','BankGothic Md BT',Michroma,'Eurostile','Square 721',sans-serif;font-size:24px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 .judge-fight-info{text-align:center;display:flex;flex-direction:column;gap:6px;justify-content:center}
 .judge-vs{font-family:'Bank Gothic','BankGothic Md BT',Michroma,'Eurostile','Square 721',sans-serif;font-size:40px;color:var(--red)}
 
@@ -92,9 +92,9 @@ dialog::backdrop{background:rgba(0,0,0,0.65)}
 .judge-slider-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .judge-slider{background:#1b1d21;border:1px solid #2a2e33;border-radius:6px;padding:10px;display:grid;gap:6px}
 .judge-slider-header{display:flex;align-items:center;justify-content:space-between;font-weight:600}
-.judge-slider-input{display:flex;align-items:center;gap:10px}
+.judge-slider-input{display:flex;align-items:center;gap:10px;min-width:0}
 .judge-slider-input input[type=range]{flex:1}
-.slider-label{font-weight:600;font-size:13px}
+.slider-label{font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;min-width:0;flex-shrink:1}
 .slider-label.red{color:var(--red)}
 .slider-label.white{color:var(--blue)}
 .judge-slider-values{display:flex;align-items:center;justify-content:space-between;font-weight:600;margin-top:4px}

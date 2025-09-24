@@ -9,7 +9,7 @@
         {% if current.red_details.image %}
           <img src="{{ current.red_details.image }}" alt="{{ current.red_details.name }}" class="judge-robot-image">
         {% endif %}
-        <div class="judge-robot-name">{{ current.red_details.name }}</div>
+        <div class="judge-robot-name" title="{{ current.red_details.name }}">{{ current.red_details.name }}</div>
         <div class="small">{{ current.red_details.driver }}{% if current.red_details.team %} — {{ current.red_details.team }}{% endif %}</div>
         <div class="small">Elo {{ current.red_details.rating or '—' }} · W-L-D {{ current.red_details.wins }}-{{ current.red_details.losses }}-{{ current.red_details.draws }}</div>
       </div>
@@ -22,7 +22,7 @@
         {% if current.white_details.image %}
           <img src="{{ current.white_details.image }}" alt="{{ current.white_details.name }}" class="judge-robot-image">
         {% endif %}
-        <div class="judge-robot-name">{{ current.white_details.name }}</div>
+        <div class="judge-robot-name" title="{{ current.white_details.name }}">{{ current.white_details.name }}</div>
         <div class="small">{{ current.white_details.driver }}{% if current.white_details.team %} — {{ current.white_details.team }}{% endif %}</div>
         <div class="small">Elo {{ current.white_details.rating or '—' }} · W-L-D {{ current.white_details.wins }}-{{ current.white_details.losses }}-{{ current.white_details.draws }}</div>
       </div>
@@ -39,9 +39,9 @@
             <span class="small">Max {{ spec.max }} pts</span>
           </div>
           <div class="judge-slider-input">
-            <span class="slider-label white">{{ current.white_details.name }}</span>
+            <span class="slider-label white" title="{{ current.white_details.name }}">{{ current.white_details.name }}</span>
             <input type="range" min="0" max="{{ spec.max }}" step="1" value="{{ slider }}">
-            <span class="slider-label red">{{ current.red_details.name }}</span>
+            <span class="slider-label red" title="{{ current.red_details.name }}">{{ current.red_details.name }}</span>
           </div>
           <div class="judge-slider-values">
             <span class="white" data-white-points>0</span>

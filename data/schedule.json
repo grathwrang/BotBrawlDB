@@ -2,6 +2,11 @@
   "list": [
     {
       "weight_class": "Antweights",
+      "red": "This Is A Really Really Really Long Robot Name That Should Definitely Be Truncated",
+      "white": "Sawshimi"
+    },
+    {
+      "weight_class": "Antweights",
       "red": "Fight schedule announced",
       "white": "Friday mornings!"
     }

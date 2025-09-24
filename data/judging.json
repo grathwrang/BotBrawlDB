@@ -1,0 +1,30 @@
+{
+  "current": {
+    "match_id": "7ad21d558b9f4fba86ca27cce3f95fdd",
+    "weight_class": "Antweights",
+    "red": "This Is A Really Really Really Long Robot Name That Should Definitely Be Truncated",
+    "white": "Sawshimi",
+    "created_at": 1758714616,
+    "judges": {},
+    "summary": {
+      "counts": {
+        "red": 0,
+        "white": 0,
+        "draw": 0
+      },
+      "winner": "draw",
+      "winner_name": null,
+      "decision": "draw",
+      "scorecard_strings": [],
+      "pending_judges": [
+        1,
+        2,
+        3
+      ],
+      "is_complete": false,
+      "judge_cards": [],
+      "headline": "Waiting for judges scores... — Pending Judges 1, 2, 3"
+    }
+  },
+  "history": []
+}
