@@ -39,14 +39,12 @@
             <span class="small">Max {{ spec.max }} pts</span>
           </div>
           <div class="judge-slider-input">
-            <span class="slider-label white" title="{{ current.white_details.name }}">{{ current.white_details.name }}</span>
             <input type="range" min="0" max="{{ spec.max }}" step="1" value="{{ slider }}">
-            <span class="slider-label red" title="{{ current.red_details.name }}">{{ current.red_details.name }}</span>
           </div>
           <div class="judge-slider-values">
-            <span class="white" data-white-points>0</span>
-            <span class="small">Points</span>
             <span class="red" data-red-points>0</span>
+            <span class="small">Points</span>
+            <span class="white" data-white-points>0</span>
           </div>
         </div>
         {% endfor %}
