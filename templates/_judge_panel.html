@@ -1,0 +1,78 @@
+<div class="panel judge-results-panel">
+  <h3 style="margin:6px 0 10px;color:#e53935">Judging Results</h3>
+  {% if panel.current %}
+    <div class="judge-result-current">
+      <div class="match-header">
+        <strong>{{ panel.current.red }} vs {{ panel.current.white }}</strong>
+        <span class="badge">{{ panel.current.weight_class }}</span>
+      </div>
+      <div class="small">{{ panel.current.headline }}</div>
+      {% if panel.current.judges %}
+      <ul class="judge-card-list">
+        {% for card in panel.current.judges %}
+        <li>
+          <strong>{{ judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id) }}:</strong>
+          {{ card.scoreline }} — {{ card.breakdown }}
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% if panel.current.pending_judges %}
+      <div class="small">Waiting on {{ 'Judge' if panel.current.pending_judges|length == 1 else 'Judges' }} {{ panel.current.pending_judges | join(', ') }}.</div>
+      {% endif %}
+    </div>
+  {% else %}
+    <p class="muted">No active match in the queue.</p>
+  {% endif %}
+
+  {% if panel.history %}
+    <hr class="sep">
+    <h4 style="margin:4px 0 8px;color:#e53935">Previous Matches</h4>
+    <div class="judge-history-list">
+      {% for match in panel.history %}
+      <details class="judge-history-item">
+        <summary>
+          <div class="history-summary">
+            <span class="name">{{ match.red }} vs {{ match.white }}</span>
+            <span class="badge">{{ match.weight_class }}</span>
+          </div>
+          <div class="small">{{ match.headline }}</div>
+        </summary>
+        <div class="history-body">
+          {% if match.completed_at %}
+          <div class="small">Completed {{ match.completed_at | datetimefromts }}</div>
+          {% endif %}
+          <ul class="judge-card-list">
+            {% for card in match.judges %}
+            <li>
+              <strong>{{ judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id) }}:</strong>
+              {{ card.scoreline }} — {{ card.breakdown }}
+            </li>
+            {% endfor %}
+          </ul>
+          {% if view == 'admin' %}
+          <div class="judge-edit-forms">
+            {% for card in match.judges %}
+            <form method="post" action="{{ url_for('schedule_judge_history_update') }}" class="judge-edit-form">
+              <input type="hidden" name="match_id" value="{{ match.match_id }}">
+              <input type="hidden" name="judge_id" value="{{ card.judge_id }}">
+              <div class="judge-edit-grid">
+                {% for spec in category_specs %}
+                <label>{{ spec.label }}
+                  <input type="number" name="{{ spec.key }}" min="0" max="{{ spec.max }}" value="{{ card.sliders[spec.key] if card.sliders and spec.key in card.sliders else (spec.max // 2) }}">
+                </label>
+                {% endfor %}
+              </div>
+              <button class="btn btn-blue" type="submit">Update {{ judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id) }}</button>
+            </form>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </details>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="muted">No previous matches yet.</p>
+  {% endif %}
+</div>

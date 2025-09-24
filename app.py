@@ -1,9 +1,30 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file, flash
-import time, os, json
+import time, os, copy
 from werkzeug.utils import secure_filename
 from elo import get_expected, get_k_for_robot, DEFAULT_RATING, DEFAULT_K, KO_WEIGHT
-from storage import load_db, save_db, DB_FILES, load_all, load_schedule, save_schedule, export_stats_csv
+from storage import (
+    load_db,
+    save_db,
+    DB_FILES,
+    load_all,
+    load_schedule,
+    save_schedule,
+    export_stats_csv,
+    load_judging_state,
+    save_judging_state,
+    update_judging_state,
+)
 from schedule_engine import generate
+from judging import (
+    CATEGORY_SPECS,
+    CATEGORY_KEYS,
+    JUDGE_COUNT,
+    ensure_state_for_schedule,
+    build_state_payload,
+    create_judge_record,
+    matches_card,
+    normalize_match,
+)
 
 UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "static", "uploads")
 ALLOWED_EXT = {"png","jpg","jpeg","gif","webp"}
@@ -15,6 +36,8 @@ app.secret_key = os.environ.get("SECRET_KEY","devkey")
 
 WEIGHT_CLASSES = list(DB_FILES.keys())
 VALID_RESULTS = {"Red wins JD", "Red wins KO", "White wins JD", "White wins KO", "Draw"}
+JUDGE_IDS = list(range(1, JUDGE_COUNT + 1))
+JUDGE_LABELS = {i: f"Judge {i}" for i in JUDGE_IDS}
 
 @app.template_filter('datetimefromts')
 def datetimefromts(ts):
@@ -47,6 +70,80 @@ def robot_stats(db, name):
         if won: wins+=1; ko_wins+= int(is_ko)
         else: losses+=1; ko_losses+= int(is_ko)
     return {"wins":wins,"losses":losses,"draws":draws,"ko_wins":ko_wins,"ko_losses":ko_losses}
+
+
+def get_synced_judging_state():
+    schedule_data = load_schedule()
+    schedule_list = schedule_data.get("list", []) if isinstance(schedule_data, dict) else []
+    state = load_judging_state()
+    state, changed = ensure_state_for_schedule(state, schedule_list)
+    if changed:
+        save_judging_state(state)
+    return state, schedule_data, schedule_list
+
+
+def sync_judging_with_schedule(schedule_data):
+    state = load_judging_state()
+    schedule_list = schedule_data.get("list", []) if isinstance(schedule_data, dict) else []
+    state, changed = ensure_state_for_schedule(state, schedule_list)
+    if changed:
+        save_judging_state(state)
+    return state
+
+
+def robot_display(weight_class, name):
+    stats_template = {"wins": 0, "losses": 0, "draws": 0, "ko_wins": 0, "ko_losses": 0}
+    if not weight_class or not name:
+        return {"name": name or "", "image": "", "driver": "", "team": "", "rating": None, **stats_template}
+    db = load_db(weight_class)
+    robots = db.get("robots", {}) or {}
+    info = robots.get(name)
+    stats = robot_stats(db, name) if info is not None else stats_template
+    if info is None:
+        return {"name": name, "image": "", "driver": "", "team": "", "rating": None, **stats}
+    return {
+        "name": name,
+        "image": info.get("image", ""),
+        "driver": info.get("driver_name", ""),
+        "team": info.get("team_name", ""),
+        "rating": info.get("rating", DEFAULT_RATING),
+        "wins": stats.get("wins", 0),
+        "losses": stats.get("losses", 0),
+        "draws": stats.get("draws", 0),
+        "ko_wins": stats.get("ko_wins", 0),
+        "ko_losses": stats.get("ko_losses", 0),
+    }
+
+
+def finalize_current_match(state, schedule_data):
+    current = state.get("current")
+    if not current:
+        return state, schedule_data
+    history_entry = copy.deepcopy(current)
+    history_entry["completed_at"] = int(time.time())
+    normalized_entry, _ = normalize_match(history_entry)
+    if normalized_entry:
+        history_entry = normalized_entry
+    state.setdefault("history", [])
+    state["history"].insert(0, history_entry)
+    state["current"] = None
+    save_judging_state(state)
+
+    schedule_list = schedule_data.get("list", []) if isinstance(schedule_data, dict) else []
+    if schedule_list:
+        if matches_card(history_entry, schedule_list[0]):
+            schedule_list.pop(0)
+        else:
+            for idx, card in enumerate(list(schedule_list)):
+                if matches_card(history_entry, card):
+                    schedule_list.pop(idx)
+                    break
+    save_schedule(schedule_data)
+
+    state, changed = ensure_state_for_schedule(state, schedule_list)
+    if changed:
+        save_judging_state(state)
+    return state, schedule_data
 
 @app.route("/")
 def index():
@@ -112,7 +209,9 @@ def submit_match():
                 m.get("white","").strip().lower() == white_norm):
                 L.pop(i)
                 break
-        save_schedule(sched); return redirect(url_for("schedule"))
+        save_schedule(sched)
+        sync_judging_with_schedule(sched)
+        return redirect(url_for("schedule"))
     return redirect(url_for("index", wc=wc))
 
 @app.post("/undo")
@@ -244,19 +343,22 @@ def export_wc_csv(wc):
 
 @app.get("/schedule")
 def schedule():
-    sched = load_schedule().get("list", [])
+    state, schedule_data, schedule_list = get_synced_judging_state()
     all_dbs = load_all()
     presence = []
     for w, db in all_dbs.items():
         for name, info in (db.get("robots", {}) or {}).items():
             presence.append({"weight": w, "robot": name, "present": "Yes" if info.get("present") else ""})
-    top = sched[0] if sched else None
+    top = schedule_list[0] if schedule_list else None
     return render_template(
         "schedule.html",
-        schedule=sched,
+        schedule=schedule_list,
         presence=presence,
         top=top,
-        weight_classes=WEIGHT_CLASSES  # <--- add this
+        weight_classes=WEIGHT_CLASSES,
+        judge_panel=build_state_payload(state, history_limit=10),
+        category_specs=CATEGORY_SPECS,
+        judge_labels=JUDGE_LABELS,
     )
 
 
@@ -266,11 +368,17 @@ def schedule_generate():
     except Exception: per = 1
     interleave = request.form.get("interleave") == "1"
     sched_list = generate(desired_per_robot=per, interleave=interleave, db_by_class=load_all())
-    save_schedule({"list": sched_list}); return redirect(url_for("schedule"))
+    schedule_data = {"list": sched_list}
+    save_schedule(schedule_data)
+    sync_judging_with_schedule(schedule_data)
+    return redirect(url_for("schedule"))
 
 @app.post("/schedule/clear")
 def schedule_clear():
-    save_schedule({"list": []}); return redirect(url_for("schedule"))
+    schedule_data = {"list": []}
+    save_schedule(schedule_data)
+    sync_judging_with_schedule(schedule_data)
+    return redirect(url_for("schedule"))
 
 @app.post("/schedule/move")
 def schedule_move():
@@ -278,13 +386,19 @@ def schedule_move():
     sched = load_schedule(); L = sched.get("list", [])
     if 0 <= idx < len(L):
         newi = idx + direction
-        if 0 <= newi < len(L): L[idx], L[newi] = L[newi], L[idx]; save_schedule(sched)
+        if 0 <= newi < len(L):
+            L[idx], L[newi] = L[newi], L[idx]
+            save_schedule(sched)
+            sync_judging_with_schedule(sched)
     return redirect(url_for("schedule"))
 
 @app.post("/schedule/delete")
 def schedule_delete():
     idx = int(request.form.get("index","-1")); sched = load_schedule(); L = sched.get("list", [])
-    if 0 <= idx < len(L): L.pop(idx); save_schedule(sched)
+    if 0 <= idx < len(L):
+        L.pop(idx)
+        save_schedule(sched)
+        sync_judging_with_schedule(sched)
     return redirect(url_for("schedule"))
 
 @app.post("/schedule/undo")
@@ -303,7 +417,9 @@ def schedule_undo():
         w["matches"]=[m for m in w.get("matches",[]) if m.get("match_id")!= last["match_id"]]
     save_db(wc, db)
     sched = load_schedule(); sched.setdefault("list", []); sched["list"].insert(0, {"weight_class": wc, "red": red, "white": white})
-    save_schedule(sched); return redirect(url_for("schedule"))
+    save_schedule(sched)
+    sync_judging_with_schedule(sched)
+    return redirect(url_for("schedule"))
 
 @app.post("/schedule/add")
 def schedule_add():
@@ -340,8 +456,156 @@ def schedule_add():
         L.append(item)
 
     save_schedule(sched)
+    sync_judging_with_schedule(sched)
     flash(f"Added fight: [{wc}] {red_norm} vs {white_norm} ({position}).", "info")
     return redirect(url_for("schedule"))
+
+
+@app.post("/schedule/judge_history/update")
+def schedule_judge_history_update():
+    match_id = (request.form.get("match_id") or "").strip()
+    judge_id_raw = (request.form.get("judge_id") or "").strip()
+    if not match_id or not judge_id_raw.isdigit():
+        flash("Invalid judge update request.", "error")
+        return redirect(url_for("schedule"))
+    judge_id = int(judge_id_raw)
+    if judge_id not in JUDGE_IDS:
+        flash("Unknown judge.", "error")
+        return redirect(url_for("schedule"))
+
+    sliders = {key: request.form.get(key) for key in CATEGORY_KEYS}
+    state, _, _ = get_synced_judging_state()
+    history = state.get("history", [])
+    target_index = None
+    for idx, entry in enumerate(history):
+        if entry.get("match_id") == match_id:
+            target_index = idx
+            break
+    if target_index is None:
+        flash("Match not found in judging history.", "error")
+        return redirect(url_for("schedule"))
+
+    entry = history[target_index]
+    entry.setdefault("judges", {})
+    entry["judges"][str(judge_id)] = create_judge_record(judge_id, sliders)
+    normalized_entry, _ = normalize_match(entry)
+    if normalized_entry is not None:
+        history[target_index] = normalized_entry
+    state["history"] = history
+    save_judging_state(state)
+    flash(f"Updated Judge {judge_id} scorecard.", "info")
+    return redirect(url_for("schedule"))
+
+
+# -------- Judge scoring pages & APIs --------
+
+
+@app.get("/judge/<int:judge_id>")
+def judge_page(judge_id):
+    if judge_id not in JUDGE_IDS:
+        return "Unknown judge", 404
+    state, _, _ = get_synced_judging_state()
+    panel_data = build_state_payload(state)
+    current_payload = panel_data.get("current")
+    current_match = state.get("current") if isinstance(state, dict) else None
+    if current_payload and current_match:
+        weight_class = current_match.get("weight_class")
+        current_payload["red_details"] = robot_display(weight_class, current_match.get("red"))
+        current_payload["white_details"] = robot_display(weight_class, current_match.get("white"))
+        existing_submission = current_match.get("judges", {}).get(str(judge_id))
+        current_payload["existing_submission"] = existing_submission
+        current_payload["match_id"] = current_match.get("match_id")
+    panel_data["judge_id"] = judge_id
+    panel_data["categories"] = CATEGORY_SPECS
+    panel_data["judge_labels"] = panel_data.get("judge_labels", JUDGE_LABELS)
+    panel_data["judge_ids"] = JUDGE_IDS
+    panel_data["api"] = {
+        "submit": url_for("judge_submit", judge_id=judge_id),
+        "state": url_for("judge_state_api"),
+    }
+    return render_template(
+        "judge.html",
+        judge_id=judge_id,
+        judge_label=JUDGE_LABELS[judge_id],
+        current=current_payload,
+        history=panel_data.get("history", []),
+        categories=CATEGORY_SPECS,
+        judge_labels=panel_data.get("judge_labels", JUDGE_LABELS),
+        judge_state_json=panel_data,
+        active_judge=judge_id,
+    )
+
+
+@app.get("/judge1")
+def judge1_redirect():
+    return redirect(url_for("judge_page", judge_id=1))
+
+
+@app.get("/judge2")
+def judge2_redirect():
+    return redirect(url_for("judge_page", judge_id=2))
+
+
+@app.get("/judge3")
+def judge3_redirect():
+    return redirect(url_for("judge_page", judge_id=3))
+
+
+@app.get("/api/judge/state")
+def judge_state_api():
+    history_limit = request.args.get("history", type=int)
+    state, _, _ = get_synced_judging_state()
+    payload = build_state_payload(state, history_limit=history_limit)
+    return jsonify(payload)
+
+
+@app.post("/api/judge/<int:judge_id>/submit")
+def judge_submit(judge_id):
+    if judge_id not in JUDGE_IDS:
+        return jsonify({"error": "Unknown judge"}), 404
+    data = request.get_json(silent=True) or {}
+    sliders = data.get("sliders", {})
+    match_id = data.get("match_id")
+    state, schedule_data, schedule_list = get_synced_judging_state()
+    judge_record = create_judge_record(judge_id, sliders)
+
+    error_payload = {"error": "No active match"}
+    error_status = 400
+
+    class StateUpdateAbort(Exception):
+        pass
+
+    def mutate_state(current_state):
+        nonlocal error_payload, error_status
+        current_state, _ = ensure_state_for_schedule(current_state, schedule_list)
+        current_match = current_state.get("current") if isinstance(current_state, dict) else None
+        if not current_match:
+            error_payload = {"error": "No active match"}
+            error_status = 400
+            raise StateUpdateAbort()
+        if match_id and match_id != current_match.get("match_id"):
+            error_payload = {"error": "Match has changed"}
+            error_status = 409
+            raise StateUpdateAbort()
+
+        judges = current_match.setdefault("judges", {})
+        judges[str(judge_id)] = judge_record
+        normalized_current, _ = normalize_match(current_match)
+        current_state["current"] = normalized_current
+        return current_state
+
+    try:
+        state = update_judging_state(mutate_state)
+    except StateUpdateAbort:
+        return jsonify(error_payload), error_status
+
+    current_match = state.get("current") if isinstance(state, dict) else None
+    summary = current_match.get("summary") if current_match else None
+    if summary and summary.get("is_complete"):
+        state, schedule_data = finalize_current_match(state, schedule_data)
+
+    payload = build_state_payload(state)
+    return jsonify(payload)
 
 
 # -------- Overlay endpoint for current top match --------
@@ -411,8 +675,8 @@ def debug_robots(wc):
 
 @app.get("/SchedulePublic")
 def schedule_public():
-    sched = load_schedule().get("list", [])
-    top = sched[0] if sched else None
+    state, schedule_data, schedule_list = get_synced_judging_state()
+    top = schedule_list[0] if schedule_list else None
     # enrich top with metadata
     top_info = None
     if top:
@@ -440,7 +704,14 @@ def schedule_public():
             "white": {"name": white, "elo": w.get("rating", DEFAULT_RATING), "driver": w.get("driver_name",""), "team": w.get("team_name",""),
                     "wins": ws["wins"], "losses": ws["losses"], "draws": ws["draws"], "ko_wins": ws["ko_wins"], "ko_losses": ws["ko_losses"]},
         }
-    return render_template("public_schedule.html", schedule=sched, top=top_info)
+    return render_template(
+        "public_schedule.html",
+        schedule=schedule_list,
+        top=top_info,
+        judge_panel=build_state_payload(state, history_limit=10),
+        judge_labels=JUDGE_LABELS,
+        category_specs=CATEGORY_SPECS,
+    )
 
 @app.get("/RankingsPublic")
 def rankings_public():

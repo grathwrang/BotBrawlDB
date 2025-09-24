@@ -91,6 +91,12 @@
     </div>
 
     <!-- Full-width: Tonight's Schedule -->
+    <div style="grid-column:1/-1;">
+      {% with panel=judge_panel, view='admin', category_specs=category_specs, judge_labels=judge_labels %}
+        {% include "_judge_panel.html" %}
+      {% endwith %}
+    </div>
+
     <div class="panel" style="grid-column:1/-1;">
       <h3 style="color:#e53935;margin:4px 0 8px">Tonight's Schedule</h3>
       <table>
