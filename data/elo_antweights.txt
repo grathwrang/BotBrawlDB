@@ -160,6 +160,14 @@
       "team_name": "Team JOTO",
       "weight_class": "Antweights",
       "present": true
+    },
+    "This Is A Really Really Really Long Robot Name That Should Definitely Be Truncated": {
+      "rating": 1000,
+      "matches": [],
+      "driver_name": "TestDriver",
+      "team_name": "",
+      "weight_class": "Antweights",
+      "present": false
     }
   },
   "history": [
