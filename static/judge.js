@@ -33,6 +33,24 @@
     const redName = (state.current.red_details && state.current.red_details.name) || state.current.red || 'Red';
     const whiteName = (state.current.white_details && state.current.white_details.name) || state.current.white || 'White';
 
+    const clamp = (value, min, max) => {
+      if (!Number.isFinite(value)) {
+        return min;
+      }
+      return Math.min(Math.max(value, min), max);
+    };
+
+    sliderWrappers.forEach(wrapper => {
+      const input = wrapper.querySelector('input[type="range"]');
+      if (!input) return;
+      const maxAttr = Number(wrapper.dataset.max || input.max || 0);
+      const max = Number.isNaN(maxAttr) ? 0 : maxAttr;
+      const raw = Number(input.value || 0);
+      const redPoints = clamp(Number.isNaN(raw) ? 0 : raw, 0, max);
+      const whiteValue = clamp(max - redPoints, 0, max);
+      input.value = String(whiteValue);
+    });
+
     const computeScores = () => {
       let totalRed = 0;
       let totalWhite = 0;
@@ -40,12 +58,14 @@
       const breakdown = [];
       sliderWrappers.forEach(wrapper => {
         const key = wrapper.dataset.key;
-        const max = Number(wrapper.dataset.max || 0);
         const input = wrapper.querySelector('input[type="range"]');
         if (!input) return;
-        const value = Number(input.value || 0);
-        const redPoints = Math.max(0, Math.min(max, value));
-        const whitePoints = max - redPoints;
+        const maxAttr = Number(wrapper.dataset.max || input.max || 0);
+        const maxValue = Number.isNaN(maxAttr) ? 0 : maxAttr;
+        const rawWhite = Number(input.value || 0);
+        const whitePoints = clamp(Number.isNaN(rawWhite) ? 0 : rawWhite, 0, maxValue);
+        const redPoints = clamp(maxValue - whitePoints, 0, maxValue);
+        input.value = String(whitePoints);
         const redDisplay = wrapper.querySelector('[data-red-points]');
         const whiteDisplay = wrapper.querySelector('[data-white-points]');
         if (redDisplay) redDisplay.textContent = String(redPoints);
