@@ -253,11 +253,17 @@ def build_state_payload(state: Dict[str, Any], history_limit: Optional[int] = No
     history = state.get("history", []) or []
     if history_limit is not None:
         history = history[:history_limit]
+    meta = state.get("_meta") or {}
+    meta_payload = {
+        "version": int(meta.get("version", 0)),
+        "updated_at": meta.get("updated_at"),
+    }
     return {
         "judge_count": JUDGE_COUNT,
         "judge_labels": {i: f"Judge {i}" for i in range(1, JUDGE_COUNT + 1)},
         "current": build_match_payload(state.get("current")),
         "history": [build_match_payload(entry) for entry in history],
+        "meta": meta_payload,
     }
 
 

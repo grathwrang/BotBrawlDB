@@ -1,4 +1,4 @@
-import os, json, datetime, tempfile, shutil, csv
+import os, json, datetime, tempfile, shutil, csv, time
 from typing import Callable, Any
 
 try:
@@ -68,7 +68,26 @@ def save_schedule(sched):
     os.replace(tmp, SCHEDULE_FP)
 
 def _blank_judging_state():
-    return {"current": None, "history": []}
+    return {
+        "current": None,
+        "history": [],
+        "_meta": {"version": 0, "updated_at": int(time.time())},
+    }
+
+
+def _ensure_state_metadata(state, *, bump: bool = True):
+    if not isinstance(state, dict):
+        state = _blank_judging_state()
+    meta = state.get("_meta")
+    if not isinstance(meta, dict):
+        meta = {}
+    current_version = int(meta.get("version", 0))
+    if bump:
+        current_version += 1
+    meta["version"] = current_version
+    meta["updated_at"] = int(time.time())
+    state["_meta"] = meta
+    return state
 
 def load_judging_state():
     ensure_dirs()
@@ -81,12 +100,16 @@ def load_judging_state():
             data = json.load(f)
             if not isinstance(data, dict):
                 return _blank_judging_state()
+            if "_meta" not in data:
+                data = _ensure_state_metadata(data, bump=False)
+                save_judging_state(data)
             return data
         except Exception:
             return _blank_judging_state()
 
 def save_judging_state(state):
     ensure_dirs()
+    state = _ensure_state_metadata(state)
     fd, tmp = tempfile.mkstemp(prefix="._judging_", dir=DATA_DIR)
     with os.fdopen(fd, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2, ensure_ascii=False)

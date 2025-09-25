@@ -92,6 +92,18 @@
     {% endwith %}
   </div>
 
+  <script>
+    window.JUDGING_LIVE_CONFIGS = window.JUDGING_LIVE_CONFIGS || [];
+    window.JUDGING_LIVE_CONFIGS.push({
+      version: {{ judge_panel.meta.version | default(0) }},
+      stateUrl: "{{ url_for('judge_state_api') }}",
+      reload: true,
+      interval: 4000,
+      skipWhenHidden: false,
+    });
+  </script>
+  <script src="{{ url_for('static', filename='judging_live.js') }}"></script>
+
   <!-- Footer Controls -->
   <div class="footer">
     <div class="row">
