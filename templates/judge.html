@@ -116,7 +116,7 @@
             <ul>
               {% for card in match.judges %}
               {% set display_name = card.judge_name if card.judge_name else (judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id)) %}
-              <li><strong>{{ display_name }}:</strong> {{ card.scoreline }}  {{ card.breakdown }}</li>
+              <li><strong>{{ display_name }}:</strong> {{ card.scoreline }} &mdash; {{ card.breakdown }}</li>
               {% endfor %}
             </ul>
           </div>
