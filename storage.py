@@ -1,5 +1,5 @@
-import os, json, datetime, tempfile, shutil, csv
-from typing import Callable, Any
+import os, json, datetime, tempfile, shutil, csv, time
+from typing import Callable, Any, Optional
 
 try:
     import fcntl  # type: ignore[attr-defined]
@@ -68,7 +68,34 @@ def save_schedule(sched):
     os.replace(tmp, SCHEDULE_FP)
 
 def _blank_judging_state():
-    return {"current": None, "history": []}
+    return {
+        "current": None,
+        "history": [],
+        "_meta": {"version": 0, "updated_at": int(time.time())},
+    }
+
+
+def _ensure_state_metadata(state, *, bump: bool = True, timestamp: Optional[int] = None):
+    if not isinstance(state, dict):
+        state = _blank_judging_state()
+    meta = state.get("_meta")
+    if not isinstance(meta, dict):
+        meta = {}
+    current_version = int(meta.get("version", 0))
+    if bump:
+        current_version += 1
+    meta["version"] = current_version
+    now = int(time.time()) if timestamp is None else int(timestamp)
+    existing_updated_at = meta.get("updated_at")
+    if bump or existing_updated_at is None:
+        meta["updated_at"] = now
+    else:
+        try:
+            meta["updated_at"] = int(existing_updated_at)
+        except (TypeError, ValueError):
+            meta["updated_at"] = now
+    state["_meta"] = meta
+    return state
 
 def load_judging_state():
     ensure_dirs()
@@ -81,12 +108,16 @@ def load_judging_state():
             data = json.load(f)
             if not isinstance(data, dict):
                 return _blank_judging_state()
+            if "_meta" not in data:
+                data = _ensure_state_metadata(data, bump=False)
+                save_judging_state(data, bump=False)
             return data
         except Exception:
             return _blank_judging_state()
 
-def save_judging_state(state):
+def save_judging_state(state, *, bump: bool = True):
     ensure_dirs()
+    state = _ensure_state_metadata(state, bump=bump)
     fd, tmp = tempfile.mkstemp(prefix="._judging_", dir=DATA_DIR)
     with os.fdopen(fd, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2, ensure_ascii=False)
@@ -103,10 +134,21 @@ def update_judging_state(mutator: Callable[[Any], Any]):
         if fcntl is not None:
             fcntl.flock(lock_file, fcntl.LOCK_EX)
         state = load_judging_state()
+        original_snapshot = json.dumps(
+            state, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+        )
         new_state = mutator(state)
-        if new_state is None:
+        if new_state is None or not isinstance(new_state, dict):
             new_state = state
-        save_judging_state(new_state)
+        updated_snapshot = json.dumps(
+            new_state, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+        )
+        changed = updated_snapshot != original_snapshot
+        has_meta = isinstance(new_state.get("_meta"), dict) if isinstance(new_state, dict) else False
+        if changed:
+            save_judging_state(new_state, bump=True)
+        elif not has_meta:
+            save_judging_state(new_state, bump=False)
         return new_state
     finally:
         if fcntl is not None:

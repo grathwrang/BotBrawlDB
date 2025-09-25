@@ -44,4 +44,15 @@
       {% include "_judge_panel.html" %}
     {% endwith %}
   </div>
+
+  <script>
+    window.JUDGING_LIVE_CONFIGS = window.JUDGING_LIVE_CONFIGS || [];
+    window.JUDGING_LIVE_CONFIGS.push({
+      version: {{ judge_panel.meta.version | default(0) }},
+      stateUrl: "{{ url_for('judge_state_api') }}",
+      reload: true,
+      interval: 5000,
+    });
+  </script>
+  <script src="{{ url_for('static', filename='judging_live.js') }}"></script>
 {% endblock %}
