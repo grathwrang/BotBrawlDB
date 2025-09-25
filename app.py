@@ -93,14 +93,28 @@ def sync_judging_with_schedule(schedule_data):
 
 def robot_display(weight_class, name):
     stats_template = {"wins": 0, "losses": 0, "draws": 0, "ko_wins": 0, "ko_losses": 0}
-    if not weight_class or not name:
-        return {"name": name or "", "image": "", "driver": "", "team": "", "rating": None, **stats_template}
-    db = load_db(weight_class)
+    base_payload = {
+        "name": name or "",
+        "image": "",
+        "driver": "",
+        "team": "",
+        "rating": None,
+        **stats_template,
+    }
+    if not weight_class or not name or weight_class not in WEIGHT_CLASSES:
+        return dict(base_payload)
+    try:
+        db = load_db(weight_class)
+    except KeyError:
+        return dict(base_payload)
     robots = db.get("robots", {}) or {}
     info = robots.get(name)
     stats = robot_stats(db, name) if info is not None else stats_template
     if info is None:
-        return {"name": name, "image": "", "driver": "", "team": "", "rating": None, **stats}
+        payload = dict(base_payload)
+        payload["name"] = name
+        payload.update(stats)
+        return payload
     return {
         "name": name,
         "image": info.get("image", ""),
@@ -245,9 +259,18 @@ def reset_all():
 
 @app.post("/robot/presence")
 def robot_presence():
-    wc = request.form.get("wc"); name = request.form.get("name"); present = request.form.get("present") == "1"
+    wc = (request.form.get("wc") or "").strip()
+    name = (request.form.get("name") or "").strip()
+    present = request.form.get("present") == "1"
+
+    if wc not in WEIGHT_CLASSES:
+        return redirect(url_for("index", wc=WEIGHT_CLASSES[0]))
+
     db = load_db(wc)
-    if name in db.get("robots", {}): db["robots"][name]["present"]=present; save_db(wc, db)
+    robots = db.get("robots", {}) or {}
+    if name and name in robots:
+        robots[name]["present"] = present
+        save_db(wc, db)
     return redirect(url_for("index", wc=wc))
 
 def save_upload(file):
