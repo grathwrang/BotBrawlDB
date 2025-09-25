@@ -573,7 +573,8 @@ def judge_submit(judge_id):
     match_id = data.get("match_id")
     if not judge_name:
         return jsonify({"error": "Judge name required"}), 400
-    state, _, schedule_list = get_synced_judging_state()
+    # unified, conflict-free state fetch
+    state, schedule_data, schedule_list = get_synced_judging_state()
     judge_record = create_judge_record(judge_id, sliders, judge_name=judge_name)
 
     error_payload = {"error": "No active match"}
@@ -789,10 +790,6 @@ def rankings_public():
     for i, r in enumerate(rows, start=1): r["rank"] = i
     return render_template("public_rankings.html", wc=wc, rows=rows)
 
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=8000)
-
-
 
 @app.get("/robot_card/<path:wc>/<path:name>")
 def robot_card(wc, name):
@@ -826,3 +823,7 @@ def robot_card(wc, name):
         return "Not found", 404
     matches = sorted(info.get("matches", []), key=lambda m: m["timestamp"], reverse=True)[:50]
     return render_template("robot_card.html", wc=wc, name=actual_name, info=info, matches=matches)
+
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=8000)

@@ -55,14 +55,12 @@
       const maxAttr = Number(wrapper.dataset.max || input.max || 0);
       const max = Number.isNaN(maxAttr) ? 0 : maxAttr;
 
-      // Restore last value from localStorage if present
+      // Restore last value from localStorage if present, else use current input
       let initialWhite = 0;
       try {
         const stored = window.localStorage?.getItem(storageKeyFor(key));
         if (stored != null) initialWhite = clamp(Number(stored), 0, max);
       } catch (_) { /* ignore */ }
-
-      // If no stored value, use current input value safely
       if (initialWhite === 0) {
         initialWhite = clamp(Number(input.value || 0), 0, max);
       }
@@ -100,7 +98,7 @@
         if (redDisplay) redDisplay.textContent = String(redPoints);
         if (whiteDisplay) whiteDisplay.textContent = String(whitePoints);
 
-        sliders[key] = redPoints; // backend expects RED per key; adjust if yours expects white
+        sliders[key] = redPoints; // backend expects RED per key; change if yours expects white
         totalRed += redPoints;
         totalWhite += whitePoints;
 
