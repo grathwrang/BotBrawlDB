@@ -3,8 +3,25 @@
   <div class="page-title">Fight Schedule</div>
   <p class="small" style="margin:6px 0 10px">Double click a robot for more info!</p>
 
+  <div class="panel">
+    <h3 style="margin:6px 0 10px;color:#e53935">Tonight's Schedule</h3>
+    <table>
+      <thead><tr><th class="center">#</th><th class="center">Weight</th><th>Red</th><th>White</th></tr></thead>
+      <tbody>
+      {% for m in schedule %}
+        <tr>
+          <td class="center">{{ loop.index }}</td>
+          <td class="center">{{ m.weight_class }}</td>
+          <td class="name-cell"><span class="robot-link" data-wc="{{ m.weight_class }}" data-name="{{ m.red }}">{{ m.red }}</span></td>
+          <td class="name-cell"><span class="robot-link" data-wc="{{ m.weight_class }}" data-name="{{ m.white }}">{{ m.white }}</span></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
   {% if top %}
-  <div class="panel" style="margin-bottom:12px">
+  <div class="panel" style="margin-top:12px">
     <h3 style="margin:6px 0 10px;color:#e53935">Now</h3>
     <div class="grid grid-3">
       <div>
@@ -22,26 +39,9 @@
   </div>
   {% endif %}
 
-  <div style="margin-bottom:12px">
+  <div style="margin-top:12px">
     {% with panel=judge_panel, view='public', category_specs=category_specs, judge_labels=judge_labels %}
       {% include "_judge_panel.html" %}
     {% endwith %}
-  </div>
-
-  <div class="panel">
-    <h3 style="margin:6px 0 10px;color:#e53935">Tonight's Schedule</h3>
-    <table>
-      <thead><tr><th class="center">#</th><th class="center">Weight</th><th>Red</th><th>White</th></tr></thead>
-      <tbody>
-      {% for m in schedule %}
-        <tr>
-          <td class="center">{{ loop.index }}</td>
-          <td class="center">{{ m.weight_class }}</td>
-          <td class="name-cell"><span class="robot-link" data-wc="{{ m.weight_class }}" data-name="{{ m.red }}">{{ m.red }}</span></td>
-          <td class="name-cell"><span class="robot-link" data-wc="{{ m.weight_class }}" data-name="{{ m.white }}">{{ m.white }}</span></td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
   </div>
 {% endblock %}

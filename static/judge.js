@@ -3,6 +3,7 @@
     const state = window.JUDGE_PAGE_STATE || null;
     const submitBtn = document.getElementById('judge-submit');
     const statusEl = document.getElementById('judge-status');
+    const judgeNameInput = document.getElementById('judge-name');
     const sliderWrappers = Array.from(document.querySelectorAll('.judge-slider'));
     const totalsRedEl = document.querySelector('[data-total-red]');
     const totalsWhiteEl = document.querySelector('[data-total-white]');
@@ -33,6 +34,55 @@
     const redName = (state.current.red_details && state.current.red_details.name) || state.current.red || 'Red';
     const whiteName = (state.current.white_details && state.current.white_details.name) || state.current.white || 'White';
 
+    if (judgeNameInput) {
+      const existingValue = judgeNameInput.value && judgeNameInput.value.trim();
+      if (!existingValue && window.localStorage) {
+        try {
+          const stored = window.localStorage.getItem('judge_name_input');
+          if (stored && !judgeNameInput.value) {
+            judgeNameInput.value = stored;
+          }
+        } catch (err) {
+          // ignore storage errors
+        }
+      }
+      judgeNameInput.addEventListener('input', () => {
+        const nameVal = judgeNameInput.value.trim();
+        if (statusEl && statusEl.textContent) {
+          statusEl.textContent = '';
+        }
+        if (window.localStorage) {
+          try {
+            if (nameVal) {
+              window.localStorage.setItem('judge_name_input', nameVal);
+            } else {
+              window.localStorage.removeItem('judge_name_input');
+            }
+          } catch (err) {
+            // ignore storage errors
+          }
+        }
+      });
+    }
+
+    const clamp = (value, min, max) => {
+      if (!Number.isFinite(value)) {
+        return min;
+      }
+      return Math.min(Math.max(value, min), max);
+    };
+
+    sliderWrappers.forEach(wrapper => {
+      const input = wrapper.querySelector('input[type="range"]');
+      if (!input) return;
+      const maxAttr = Number(wrapper.dataset.max || input.max || 0);
+      const max = Number.isNaN(maxAttr) ? 0 : maxAttr;
+      const raw = Number(input.value || 0);
+      const redPoints = clamp(Number.isNaN(raw) ? 0 : raw, 0, max);
+      const whiteValue = clamp(max - redPoints, 0, max);
+      input.value = String(whiteValue);
+    });
+
     const computeScores = () => {
       let totalRed = 0;
       let totalWhite = 0;
@@ -40,12 +90,14 @@
       const breakdown = [];
       sliderWrappers.forEach(wrapper => {
         const key = wrapper.dataset.key;
-        const max = Number(wrapper.dataset.max || 0);
         const input = wrapper.querySelector('input[type="range"]');
         if (!input) return;
-        const value = Number(input.value || 0);
-        const redPoints = Math.max(0, Math.min(max, value));
-        const whitePoints = max - redPoints;
+        const maxAttr = Number(wrapper.dataset.max || input.max || 0);
+        const maxValue = Number.isNaN(maxAttr) ? 0 : maxAttr;
+        const rawWhite = Number(input.value || 0);
+        const whitePoints = clamp(Number.isNaN(rawWhite) ? 0 : rawWhite, 0, maxValue);
+        const redPoints = clamp(maxValue - whitePoints, 0, maxValue);
+        input.value = String(whitePoints);
         const redDisplay = wrapper.querySelector('[data-red-points]');
         const whiteDisplay = wrapper.querySelector('[data-white-points]');
         if (redDisplay) redDisplay.textContent = String(redPoints);
@@ -85,6 +137,16 @@
     computeScores();
 
     submitBtn.addEventListener('click', () => {
+      const judgeName = judgeNameInput ? judgeNameInput.value.trim() : '';
+      if (!judgeName) {
+        if (statusEl) {
+          statusEl.textContent = 'Please enter your name before submitting.';
+        }
+        if (judgeNameInput) {
+          judgeNameInput.focus();
+        }
+        return;
+      }
       const { totalRed, totalWhite, sliders, breakdown } = computeScores();
       const scoreline = `${totalRed}-${totalWhite}`;
       const breakdownText = breakdown.map(part => `${part.label} ${part.red}-${part.white}`).join(', ');
@@ -109,6 +171,7 @@
         body: JSON.stringify({
           match_id: state.current.match_id,
           sliders,
+          judge_name: judgeName,
         }),
       })
         .then(response => response.json().then(data => ({ ok: response.ok, data })))

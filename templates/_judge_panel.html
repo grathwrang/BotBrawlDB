@@ -10,8 +10,9 @@
       {% if panel.current.judges %}
       <ul class="judge-card-list">
         {% for card in panel.current.judges %}
+        {% set display_name = card.judge_name if card.judge_name else (judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id)) %}
         <li>
-          <strong>{{ judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id) }}:</strong>
+          <strong>{{ display_name }}:</strong>
           {{ card.scoreline }} — {{ card.breakdown }}
         </li>
         {% endfor %}
@@ -44,8 +45,9 @@
           {% endif %}
           <ul class="judge-card-list">
             {% for card in match.judges %}
+            {% set display_name = card.judge_name if card.judge_name else (judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id)) %}
             <li>
-              <strong>{{ judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id) }}:</strong>
+              <strong>{{ display_name }}:</strong>
               {{ card.scoreline }} — {{ card.breakdown }}
             </li>
             {% endfor %}
@@ -56,6 +58,7 @@
             <form method="post" action="{{ url_for('schedule_judge_history_update') }}" class="judge-edit-form">
               <input type="hidden" name="match_id" value="{{ match.match_id }}">
               <input type="hidden" name="judge_id" value="{{ card.judge_id }}">
+              <input type="hidden" name="judge_name" value="{{ card.judge_name or '' }}">
               <div class="judge-edit-grid">
                 {% for spec in category_specs %}
                 <label>{{ spec.label }}
@@ -63,7 +66,8 @@
                 </label>
                 {% endfor %}
               </div>
-              <button class="btn btn-blue" type="submit">Update {{ judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id) }}</button>
+              {% set display_name = card.judge_name if card.judge_name else (judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id)) %}
+              <button class="btn btn-blue" type="submit">Update {{ display_name }}</button>
             </form>
             {% endfor %}
           </div>
