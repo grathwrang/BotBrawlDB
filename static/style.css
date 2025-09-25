@@ -53,6 +53,10 @@ td.right,th.right{text-align:right}
 .footer .btn{padding:6px 10px;font-size:13px}
 .footer .btn.btn-red,.footer .btn.btn-green,.footer .btn.btn-blue{line-height:1}
 .footer .row + .row{margin-top:6px}
+.footer details.footer-collapsible{border:1px solid #2a2e33;border-radius:6px;padding:6px 8px;background:#151719}
+.footer details.footer-collapsible[open]{background:#181b1e}
+.footer details.footer-collapsible summary{cursor:pointer;list-style:none}
+.footer details.footer-collapsible summary::-webkit-details-marker{display:none}
 label{display:block;font-size:14px;color:#cfd8dc;margin-bottom:4px}
 input,select{width:100%;background:#0f1114;color:#fff;border:1px solid #2a2e33;border-radius:6px;padding:8px}
 .badge{display:inline-block;background:#1f2226;border:1px solid #2a2e33;color:#cfd8dc;border-radius:6px;padding:4px 8px}

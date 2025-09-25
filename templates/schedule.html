@@ -153,8 +153,9 @@
     </div>
 
     <div class="row footer-manual-add" style="flex-direction:column;align-items:stretch;margin-top:12px;gap:8px;">
-      <h3 style="color:#e53935;margin:0">Manual Add Fight</h3>
-      <form method="post" action="{{ url_for('schedule_add') }}" class="form-grid" style="display:grid;gap:10px;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));">
+      <details class="footer-collapsible" open>
+        <summary><h3 style="color:#e53935;margin:0;font-size:14px;display:inline;">Manual Add Fight</h3></summary>
+      <form method="post" action="{{ url_for('schedule_add') }}" class="form-grid" style="display:grid;gap:10px;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));margin-top:6px;">
         <label style="display:flex;flex-direction:column;gap:6px;">
           <strong>Weight class</strong>
           <select name="wc" required>
@@ -182,7 +183,8 @@
           <button class="btn btn-green" type="submit">Add Fight</button>
         </div>
       </form>
-      <p class="muted" style="margin:0;">Tip: robot names are matched (case-insensitive) to existing robots when possible; otherwise, free-form names are accepted.</p>
+      <p class="muted" style="margin:4px 0 0;">Tip: robot names are matched (case-insensitive) to existing robots when possible; otherwise, free-form names are accepted.</p>
+      </details>
     </div>
   </div>
 {% endblock %}
