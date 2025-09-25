@@ -319,6 +319,18 @@ def build_state_payload(state: Dict[str, Any], history_limit: Optional[int] = No
                 "decision": "KO",
                 "scorecard_strings": [],
                 "counts": {},
+                # Embed a summary so build_match_payload does not overwrite winner
+                "summary": {
+                    "counts": {},
+                    "winner": "red" if winner_name == red else ("white" if winner_name == white else "draw"),
+                    "winner_name": winner_name,
+                    "decision": "KO",
+                    "scorecard_strings": [],
+                    "pending_judges": [],
+                    "is_complete": True,
+                    "judge_cards": [],
+                    "headline": f"{winner_name} wins via KO" if winner_name else "KO recorded",
+                },
             }
             normalized_history.append(synth)
             seen_keys.add(key)
