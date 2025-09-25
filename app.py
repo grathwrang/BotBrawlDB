@@ -768,15 +768,15 @@ def schedule_public():
                 else: s["losses"]+=1; s["ko_losses"]+= int(is_ko)
             return s
         rs = stats(db, red); ws = stats(db, white)
-    top_info = {
-        "weight_class": wc,
-        "red": {"name": red, "elo": r.get("rating", DEFAULT_RATING), "driver": r.get("driver_name",""), "team": r.get("team_name",""),
-            "wins": rs["wins"], "losses": rs["losses"], "draws": rs["draws"], "ko_wins": rs["ko_wins"], "ko_losses": rs["ko_losses"],
-            "image": r.get("image", "")},
-        "white": {"name": white, "elo": w.get("rating", DEFAULT_RATING), "driver": w.get("driver_name",""), "team": w.get("team_name",""),
-            "wins": ws["wins"], "losses": ws["losses"], "draws": ws["draws"], "ko_wins": ws["ko_wins"], "ko_losses": ws["ko_losses"],
-            "image": w.get("image", "")},
-    }
+        top_info = {
+            "weight_class": wc,
+            "red": {"name": red, "elo": r.get("rating", DEFAULT_RATING), "driver": r.get("driver_name",""), "team": r.get("team_name",""),
+                "wins": rs["wins"], "losses": rs["losses"], "draws": rs["draws"], "ko_wins": rs["ko_wins"], "ko_losses": rs["ko_losses"],
+                "image": r.get("image", "")},
+            "white": {"name": white, "elo": w.get("rating", DEFAULT_RATING), "driver": w.get("driver_name",""), "team": w.get("team_name",""),
+                "wins": ws["wins"], "losses": ws["losses"], "draws": ws["draws"], "ko_wins": ws["ko_wins"], "ko_losses": ws["ko_losses"],
+                "image": w.get("image", "")},
+        }
     # Build enriched schedule list with images for thumbnails
     enriched_schedule = []
     for idx, card in enumerate(schedule_list or []):

@@ -96,6 +96,13 @@ class AppRoutesTestCase(unittest.TestCase):
         after = self.client.get("/api/judge/state").get_json()
         self.assertEqual(after["meta"]["version"], original_version)
 
+    def test_public_schedule_empty(self):
+        # Ensure schedule file is empty
+        storage.save_schedule({"list": []})
+        resp = self.client.get("/SchedulePublic")
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(b"No fights are scheduled yet", resp.data)
+
 
 if __name__ == "__main__":  # pragma: no cover
     unittest.main()
