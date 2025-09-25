@@ -1,5 +1,8 @@
 import os
+import tempfile
 import unittest
+from unittest import mock
+
 from flask import url_for
 
 import app as bot_app
@@ -10,21 +13,29 @@ class AppRoutesTestCase(unittest.TestCase):
     def setUp(self):
         bot_app.app.config["TESTING"] = True
         self.client = bot_app.app.test_client()
-        storage.ensure_dirs()
-        self._judging_fp = storage.JUDGING_FP
-        if os.path.exists(self._judging_fp):
-            with open(self._judging_fp, "rb") as fh:
-                self._judging_backup = fh.read()
-        else:
-            self._judging_backup = None
+        self._tempdir = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tempdir.cleanup)
 
-    def tearDown(self):
-        if self._judging_backup is None:
-            if os.path.exists(self._judging_fp):
-                os.remove(self._judging_fp)
-        else:
-            with open(self._judging_fp, "wb") as fh:
-                fh.write(self._judging_backup)
+        patched_judging_fp = os.path.join(self._tempdir.name, "judging.json")
+        patched_lock_fp = os.path.join(self._tempdir.name, "judging.lock")
+        patched_schedule_fp = os.path.join(self._tempdir.name, "schedule.json")
+        patched_db_files = {
+            wc: os.path.join(self._tempdir.name, f"{wc.lower()}_elo.json")
+            for wc in storage.DB_FILES
+        }
+
+        self._patches = [
+            mock.patch.object(storage, "DATA_DIR", self._tempdir.name),
+            mock.patch.object(storage, "SCHEDULE_FP", patched_schedule_fp),
+            mock.patch.object(storage, "JUDGING_FP", patched_judging_fp),
+            mock.patch.object(storage, "JUDGING_LOCK_FP", patched_lock_fp),
+            mock.patch.object(storage, "DB_FILES", patched_db_files),
+        ]
+        for patch in self._patches:
+            patch.start()
+            self.addCleanup(patch.stop)
+
+        storage.ensure_dirs()
 
     def test_robot_display_handles_invalid_weight_class(self):
         result = bot_app.robot_display("Unknown", "TestBot")
