@@ -1,4 +1,3 @@
-<script>
 (function () {
   document.addEventListener('DOMContentLoaded', () => {
     const state = window.JUDGE_PAGE_STATE || null;
@@ -215,4 +214,3 @@
     });
   });
 })();
-</script>
