@@ -86,7 +86,7 @@
   {% endif %}
 
   <div class="panel judge-history">
-    <h3>Previous Matches</h3>
+    <h3>Previous Fights</h3>
     {% if history %}
       <div class="judge-history-list">
         {% for match in history %}
@@ -102,10 +102,21 @@
             {% if match.completed_at %}
             <div class="small">Completed {{ match.completed_at | datetimefromts }}</div>
             {% endif %}
+            <div class="small">
+              {% if match.decision and 'KO' in match.decision %}
+                <span class="badge" style="background:#222;color:#fff">Knockout</span>
+              {% endif %}
+              {% if match.winner_name %}
+                Winner: <strong>{{ match.winner_name }}</strong>
+              {% endif %}
+              {% if match.decision %}
+                &mdash; {{ match.decision|capitalize }}
+              {% endif %}
+            </div>
             <ul>
               {% for card in match.judges %}
               {% set display_name = card.judge_name if card.judge_name else (judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id)) %}
-              <li><strong>{{ display_name }}:</strong> {{ card.scoreline }} — {{ card.breakdown }}</li>
+              <li><strong>{{ display_name }}:</strong> {{ card.scoreline }}  {{ card.breakdown }}</li>
               {% endfor %}
             </ul>
           </div>

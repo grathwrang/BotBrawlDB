@@ -1,5 +1,5 @@
 <div class="panel judge-results-panel">
-  <h3 style="margin:6px 0 10px;color:#e53935">Judging Results</h3>
+  <h3 style="margin:6px 0 10px;color:#e53935">Results</h3>
   {% if panel.current %}
     <div class="judge-result-current">
       <div class="match-header">
@@ -28,7 +28,7 @@
 
   {% if panel.history %}
     <hr class="sep">
-    <h4 style="margin:4px 0 8px;color:#e53935">Previous Matches</h4>
+    <h4 style="margin:4px 0 8px;color:#e53935">Previous Fights</h4>
     <div class="judge-history-list">
       {% for match in panel.history %}
       <details class="judge-history-item">
@@ -43,12 +43,23 @@
           {% if match.completed_at %}
           <div class="small">Completed {{ match.completed_at | datetimefromts }}</div>
           {% endif %}
+          <div class="small">
+            {% if match.decision and 'KO' in match.decision %}
+              <span class="badge" style="background:#222;color:#fff">Knockout</span>
+            {% endif %}
+            {% if match.winner_name %}
+              Winner: <strong>{{ match.winner_name }}</strong>
+            {% endif %}
+            {% if match.decision %}
+              &mdash; {{ match.decision|capitalize }}
+            {% endif %}
+          </div>
           <ul class="judge-card-list">
             {% for card in match.judges %}
             {% set display_name = card.judge_name if card.judge_name else (judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id)) %}
             <li>
               <strong>{{ display_name }}:</strong>
-              {{ card.scoreline }} — {{ card.breakdown }}
+              {{ card.scoreline }}  {{ card.breakdown }}
             </li>
             {% endfor %}
           </ul>
