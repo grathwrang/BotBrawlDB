@@ -1,8 +1,48 @@
 {
   "robots": {
     "Homer": {
-      "rating": 1000,
-      "matches": [],
+      "rating": 1023,
+      "matches": [
+        {
+          "match_id": 10,
+          "timestamp": 1758326100,
+          "red_corner": "Homer",
+          "white_corner": "Dispatchula",
+          "result": "Red wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1056,
+          "new_rating_red": 1022,
+          "new_rating_white": 1037,
+          "change_red": 22,
+          "change_white": -19
+        },
+        {
+          "match_id": 12,
+          "timestamp": 1758327803,
+          "red_corner": "Whammo Can & Driveway Hero",
+          "white_corner": "Homer",
+          "result": "White wins KO",
+          "old_rating_red": 1008,
+          "old_rating_white": 1022,
+          "new_rating_red": 993,
+          "new_rating_white": 1041,
+          "change_red": -15,
+          "change_white": 19
+        },
+        {
+          "match_id": 13,
+          "timestamp": 1758328241,
+          "red_corner": "Alpalcalypse",
+          "white_corner": "Homer",
+          "result": "Red wins KO",
+          "old_rating_red": 1005,
+          "old_rating_white": 1041,
+          "new_rating_red": 1026,
+          "new_rating_white": 1023,
+          "change_red": 21,
+          "change_white": -18
+        }
+      ],
       "driver_name": "Dan",
       "team_name": "Idle Hands",
       "weight_class": "Sumos",
@@ -18,7 +58,7 @@
       "present": false
     },
     "Dispatchula": {
-      "rating": 1056,
+      "rating": 1019,
       "matches": [
         {
           "match_id": 6,
@@ -58,6 +98,32 @@
           "new_rating_white": 988,
           "change_red": 18,
           "change_white": -14
+        },
+        {
+          "match_id": 10,
+          "timestamp": 1758326100,
+          "red_corner": "Homer",
+          "white_corner": "Dispatchula",
+          "result": "Red wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1056,
+          "new_rating_red": 1022,
+          "new_rating_white": 1037,
+          "change_red": 22,
+          "change_white": -19
+        },
+        {
+          "match_id": 11,
+          "timestamp": 1758326617,
+          "red_corner": "Dispatchula",
+          "white_corner": "Alpalcalypse",
+          "result": "White wins KO",
+          "old_rating_red": 1037,
+          "old_rating_white": 983,
+          "new_rating_red": 1019,
+          "new_rating_white": 1005,
+          "change_red": -18,
+          "change_white": 22
         }
       ],
       "driver_name": "Garrett",
@@ -103,7 +169,7 @@
       "image": "/static/uploads/1757918102279_bort_transp.png"
     },
     "Whammo Can & Driveway Hero": {
-      "rating": 988,
+      "rating": 993,
       "matches": [
         {
           "match_id": 5,
@@ -143,6 +209,32 @@
           "new_rating_white": 988,
           "change_red": 18,
           "change_white": -14
+        },
+        {
+          "match_id": 9,
+          "timestamp": 1758325454,
+          "red_corner": "Whammo Can & Driveway Hero",
+          "white_corner": "Alpalcalypse",
+          "result": "Red wins KO",
+          "old_rating_red": 988,
+          "old_rating_white": 1000,
+          "new_rating_red": 1008,
+          "new_rating_white": 983,
+          "change_red": 20,
+          "change_white": -17
+        },
+        {
+          "match_id": 12,
+          "timestamp": 1758327803,
+          "red_corner": "Whammo Can & Driveway Hero",
+          "white_corner": "Homer",
+          "result": "White wins KO",
+          "old_rating_red": 1008,
+          "old_rating_white": 1022,
+          "new_rating_red": 993,
+          "new_rating_white": 1041,
+          "change_red": -15,
+          "change_white": 19
         }
       ],
       "driver_name": "Garrett",
@@ -151,14 +243,62 @@
       "present": true,
       "image": "/static/uploads/1757918121341_Whammo_Can_and_Driveway_Hero_transp.png"
     },
-    "Jimmy Neutrons Hot Mom (Judy)": {
+    "Jimmy Neutron’s Hot Mom": {
       "rating": 1000,
       "matches": [],
       "driver_name": "Autumn",
-      "team_name": "Capybara Biggus Piggus",
+      "team_name": "",
+      "weight_class": "Sumos",
+      "present": true
+    },
+    "Alpacalypse": {
+      "rating": 1026,
+      "matches": [
+        {
+          "match_id": 9,
+          "timestamp": 1758325454,
+          "red_corner": "Whammo Can & Driveway Hero",
+          "white_corner": "Alpalcalypse",
+          "result": "Red wins KO",
+          "old_rating_red": 988,
+          "old_rating_white": 1000,
+          "new_rating_red": 1008,
+          "new_rating_white": 983,
+          "change_red": 20,
+          "change_white": -17
+        },
+        {
+          "match_id": 11,
+          "timestamp": 1758326617,
+          "red_corner": "Dispatchula",
+          "white_corner": "Alpalcalypse",
+          "result": "White wins KO",
+          "old_rating_red": 1037,
+          "old_rating_white": 983,
+          "new_rating_red": 1019,
+          "new_rating_white": 1005,
+          "change_red": -18,
+          "change_white": 22
+        },
+        {
+          "match_id": 13,
+          "timestamp": 1758328241,
+          "red_corner": "Alpalcalypse",
+          "white_corner": "Homer",
+          "result": "Red wins KO",
+          "old_rating_red": 1005,
+          "old_rating_white": 1041,
+          "new_rating_red": 1026,
+          "new_rating_white": 1023,
+          "change_red": 21,
+          "change_white": -18
+        }
+      ],
+      "driver_name": "Andrea",
+      "team_name": "Andrea",
       "weight_class": "Sumos",
       "present": true,
-      "image": "/static/uploads/1757921091847_Judy_transp.png"
+      "image": "/static/uploads/1758307601827_cc5508ea-ce2c-4b4e-a90a-7dbb9d3eedd4.jpg"
     }
   },
   "history": [
@@ -213,9 +353,74 @@
       "new_rating_white": 988,
       "change_red": 18,
       "change_white": -14
+    },
+    {
+      "match_id": 9,
+      "timestamp": 1758325454,
+      "red_corner": "Whammo Can & Driveway Hero",
+      "white_corner": "Alpalcalypse",
+      "result": "Red wins KO",
+      "old_rating_red": 988,
+      "old_rating_white": 1000,
+      "new_rating_red": 1008,
+      "new_rating_white": 983,
+      "change_red": 20,
+      "change_white": -17
+    },
+    {
+      "match_id": 10,
+      "timestamp": 1758326100,
+      "red_corner": "Homer",
+      "white_corner": "Dispatchula",
+      "result": "Red wins KO",
+      "old_rating_red": 1000,
+      "old_rating_white": 1056,
+      "new_rating_red": 1022,
+      "new_rating_white": 1037,
+      "change_red": 22,
+      "change_white": -19
+    },
+    {
+      "match_id": 11,
+      "timestamp": 1758326617,
+      "red_corner": "Dispatchula",
+      "white_corner": "Alpalcalypse",
+      "result": "White wins KO",
+      "old_rating_red": 1037,
+      "old_rating_white": 983,
+      "new_rating_red": 1019,
+      "new_rating_white": 1005,
+      "change_red": -18,
+      "change_white": 22
+    },
+    {
+      "match_id": 12,
+      "timestamp": 1758327803,
+      "red_corner": "Whammo Can & Driveway Hero",
+      "white_corner": "Homer",
+      "result": "White wins KO",
+      "old_rating_red": 1008,
+      "old_rating_white": 1022,
+      "new_rating_red": 993,
+      "new_rating_white": 1041,
+      "change_red": -15,
+      "change_white": 19
+    },
+    {
+      "match_id": 13,
+      "timestamp": 1758328241,
+      "red_corner": "Alpalcalypse",
+      "white_corner": "Homer",
+      "result": "Red wins KO",
+      "old_rating_red": 1005,
+      "old_rating_white": 1041,
+      "new_rating_red": 1026,
+      "new_rating_white": 1023,
+      "change_red": 21,
+      "change_white": -18
     }
   ],
-  "next_match_id": 9,
+  "next_match_id": 14,
   "settings": {
     "K": 32,
     "ko_weight": 1.1

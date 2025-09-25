@@ -1,7 +1,7 @@
 {
   "robots": {
     "Left Shoe Right Foot": {
-      "rating": 1002,
+      "rating": 971,
       "matches": [
         {
           "match_id": 2,
@@ -28,12 +28,38 @@
           "new_rating_white": 1002,
           "change_red": -17,
           "change_white": 17
+        },
+        {
+          "match_id": 4,
+          "timestamp": 1758324992,
+          "red_corner": "Left Shoe Right Foot",
+          "white_corner": "Sawshimi",
+          "result": "White wins KO",
+          "old_rating_red": 1002,
+          "old_rating_white": 1000,
+          "new_rating_red": 986,
+          "new_rating_white": 1019,
+          "change_red": -16,
+          "change_white": 19
+        },
+        {
+          "match_id": 6,
+          "timestamp": 1758327365,
+          "red_corner": "Fanter",
+          "white_corner": "Left Shoe Right Foot",
+          "result": "Red wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 986,
+          "new_rating_red": 1019,
+          "new_rating_white": 971,
+          "change_red": 19,
+          "change_white": -15
         }
       ],
       "driver_name": "Garrett",
       "team_name": "Botshed Robotics",
       "weight_class": "Antweights",
-      "present": true,
+      "present": false,
       "image": "/static/uploads/1757681027325_Left_Shoe_Right_Foot_transp.png"
     },
     "Mini Vortex": {
@@ -96,12 +122,52 @@
       "image": "/static/uploads/1757681677135_Shredder_transp.png"
     },
     "Sawshimi": {
-      "rating": 1000,
-      "matches": [],
+      "rating": 1018,
+      "matches": [
+        {
+          "match_id": 4,
+          "timestamp": 1758324992,
+          "red_corner": "Left Shoe Right Foot",
+          "white_corner": "Sawshimi",
+          "result": "White wins KO",
+          "old_rating_red": 1002,
+          "old_rating_white": 1000,
+          "new_rating_red": 986,
+          "new_rating_white": 1019,
+          "change_red": -16,
+          "change_white": 19
+        },
+        {
+          "match_id": 7,
+          "timestamp": 1758329216,
+          "red_corner": "Sawshimi",
+          "white_corner": "Pistol Shrimp",
+          "result": "Red wins JD",
+          "old_rating_red": 1019,
+          "old_rating_white": 1019,
+          "new_rating_red": 1035,
+          "new_rating_white": 1003,
+          "change_red": 16,
+          "change_white": -16
+        },
+        {
+          "match_id": 8,
+          "timestamp": 1758332545,
+          "red_corner": "Fanter",
+          "white_corner": "Sawshimi",
+          "result": "Red wins KO",
+          "old_rating_red": 1019,
+          "old_rating_white": 1035,
+          "new_rating_red": 1039,
+          "new_rating_white": 1018,
+          "change_red": 20,
+          "change_white": -17
+        }
+      ],
       "driver_name": "Damian",
       "team_name": "LOUDHOUSE",
       "weight_class": "Antweights",
-      "present": true,
+      "present": false,
       "image": "/static/uploads/1757920542980_sawshimi_transp.png"
     },
     "Royal Reaper": {
@@ -128,29 +194,97 @@
       "image": "/static/uploads/1757682050687_Royal_Reaper_transp.png"
     },
     "Pistol Shrimp": {
-      "rating": 1000,
-      "matches": [],
+      "rating": 1003,
+      "matches": [
+        {
+          "match_id": 5,
+          "timestamp": 1758326349,
+          "red_corner": "Pistol Shrimp",
+          "white_corner": "Dragonfly",
+          "result": "Red wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1000,
+          "new_rating_red": 1019,
+          "new_rating_white": 984,
+          "change_red": 19,
+          "change_white": -16
+        },
+        {
+          "match_id": 7,
+          "timestamp": 1758329216,
+          "red_corner": "Sawshimi",
+          "white_corner": "Pistol Shrimp",
+          "result": "Red wins JD",
+          "old_rating_red": 1019,
+          "old_rating_white": 1019,
+          "new_rating_red": 1035,
+          "new_rating_white": 1003,
+          "change_red": 16,
+          "change_white": -16
+        }
+      ],
       "driver_name": "Lucas",
       "team_name": "Dremel Gaming Robotics",
       "weight_class": "Antweights",
-      "present": true,
+      "present": false,
       "image": "/static/uploads/1757920416986_pistol_shrimp_transp.png"
     },
     "Dragonfly": {
-      "rating": 1000,
-      "matches": [],
+      "rating": 984,
+      "matches": [
+        {
+          "match_id": 5,
+          "timestamp": 1758326349,
+          "red_corner": "Pistol Shrimp",
+          "white_corner": "Dragonfly",
+          "result": "Red wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1000,
+          "new_rating_red": 1019,
+          "new_rating_white": 984,
+          "change_red": 19,
+          "change_white": -16
+        }
+      ],
       "driver_name": "Leo",
       "team_name": "Ping Industries",
       "weight_class": "Antweights",
-      "present": true
+      "present": false
     },
     "Fanter": {
-      "rating": 1000,
-      "matches": [],
+      "rating": 1039,
+      "matches": [
+        {
+          "match_id": 6,
+          "timestamp": 1758327365,
+          "red_corner": "Fanter",
+          "white_corner": "Left Shoe Right Foot",
+          "result": "Red wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 986,
+          "new_rating_red": 1019,
+          "new_rating_white": 971,
+          "change_red": 19,
+          "change_white": -15
+        },
+        {
+          "match_id": 8,
+          "timestamp": 1758332545,
+          "red_corner": "Fanter",
+          "white_corner": "Sawshimi",
+          "result": "Red wins KO",
+          "old_rating_red": 1019,
+          "old_rating_white": 1035,
+          "new_rating_red": 1039,
+          "new_rating_white": 1018,
+          "change_red": 20,
+          "change_white": -17
+        }
+      ],
       "driver_name": "Benjamin",
       "team_name": "Team JOTO",
       "weight_class": "Antweights",
-      "present": true,
+      "present": false,
       "image": "/static/uploads/1757920705019_fanter_transp.png"
     },
     "Glup": {
@@ -158,14 +292,6 @@
       "matches": [],
       "driver_name": "Benjamin",
       "team_name": "Team JOTO",
-      "weight_class": "Antweights",
-      "present": true
-    },
-    "This Is A Really Really Really Long Robot Name That Should Definitely Be Truncated": {
-      "rating": 1000,
-      "matches": [],
-      "driver_name": "TestDriver",
-      "team_name": "",
       "weight_class": "Antweights",
       "present": false
     }
@@ -209,9 +335,74 @@
       "new_rating_white": 1002,
       "change_red": -17,
       "change_white": 17
+    },
+    {
+      "match_id": 4,
+      "timestamp": 1758324992,
+      "red_corner": "Left Shoe Right Foot",
+      "white_corner": "Sawshimi",
+      "result": "White wins KO",
+      "old_rating_red": 1002,
+      "old_rating_white": 1000,
+      "new_rating_red": 986,
+      "new_rating_white": 1019,
+      "change_red": -16,
+      "change_white": 19
+    },
+    {
+      "match_id": 5,
+      "timestamp": 1758326349,
+      "red_corner": "Pistol Shrimp",
+      "white_corner": "Dragonfly",
+      "result": "Red wins KO",
+      "old_rating_red": 1000,
+      "old_rating_white": 1000,
+      "new_rating_red": 1019,
+      "new_rating_white": 984,
+      "change_red": 19,
+      "change_white": -16
+    },
+    {
+      "match_id": 6,
+      "timestamp": 1758327365,
+      "red_corner": "Fanter",
+      "white_corner": "Left Shoe Right Foot",
+      "result": "Red wins KO",
+      "old_rating_red": 1000,
+      "old_rating_white": 986,
+      "new_rating_red": 1019,
+      "new_rating_white": 971,
+      "change_red": 19,
+      "change_white": -15
+    },
+    {
+      "match_id": 7,
+      "timestamp": 1758329216,
+      "red_corner": "Sawshimi",
+      "white_corner": "Pistol Shrimp",
+      "result": "Red wins JD",
+      "old_rating_red": 1019,
+      "old_rating_white": 1019,
+      "new_rating_red": 1035,
+      "new_rating_white": 1003,
+      "change_red": 16,
+      "change_white": -16
+    },
+    {
+      "match_id": 8,
+      "timestamp": 1758332545,
+      "red_corner": "Fanter",
+      "white_corner": "Sawshimi",
+      "result": "Red wins KO",
+      "old_rating_red": 1019,
+      "old_rating_white": 1035,
+      "new_rating_red": 1039,
+      "new_rating_white": 1018,
+      "change_red": 20,
+      "change_white": -17
     }
   ],
-  "next_match_id": 4,
+  "next_match_id": 9,
   "settings": {
     "K": 32,
     "ko_weight": 1.1
