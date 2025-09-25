@@ -109,16 +109,30 @@
       "image": "/static/uploads/1757681806744_shrubert_transp.png"
     },
     "Kansei Dorifto": {
-      "rating": 1000,
-      "matches": [],
+      "rating": 983,
+      "matches": [
+        {
+          "match_id": 15,
+          "timestamp": 1758331557,
+          "red_corner": "Charity Case",
+          "white_corner": "Kansei Dorifto",
+          "result": "Red wins KO",
+          "old_rating_red": 989,
+          "old_rating_white": 1000,
+          "new_rating_red": 1009,
+          "new_rating_white": 983,
+          "change_red": 20,
+          "change_white": -17
+        }
+      ],
       "driver_name": "Dan",
       "team_name": "Idle Hands",
       "weight_class": "Beetleweights",
-      "present": true,
+      "present": false,
       "image": "/static/uploads/1757916835445_kanseiplain.png"
     },
     "Anubis": {
-      "rating": 983,
+      "rating": 956,
       "matches": [
         {
           "match_id": 9,
@@ -132,6 +146,32 @@
           "new_rating_white": 1004,
           "change_red": -17,
           "change_white": 20
+        },
+        {
+          "match_id": 11,
+          "timestamp": 1758324764,
+          "red_corner": "Anubis",
+          "white_corner": "Ipseity",
+          "result": "White wins KO",
+          "old_rating_red": 983,
+          "old_rating_white": 1038,
+          "new_rating_red": 970,
+          "new_rating_white": 1055,
+          "change_red": -13,
+          "change_white": 17
+        },
+        {
+          "match_id": 14,
+          "timestamp": 1758328013,
+          "red_corner": "Orders From the House (You're the Only Place That Feels like Home)",
+          "white_corner": "Anubis",
+          "result": "Red wins KO",
+          "old_rating_red": 1019,
+          "old_rating_white": 970,
+          "new_rating_red": 1036,
+          "new_rating_white": 956,
+          "change_red": 17,
+          "change_white": -14
         }
       ],
       "driver_name": "Anthony",
@@ -141,7 +181,7 @@
       "image": "/static/uploads/1757915933327_Anubis_transp.png"
     },
     "Charity Case": {
-      "rating": 989,
+      "rating": 1029,
       "matches": [
         {
           "match_id": 8,
@@ -181,6 +221,32 @@
           "new_rating_white": 989,
           "change_red": 19,
           "change_white": -15
+        },
+        {
+          "match_id": 15,
+          "timestamp": 1758331557,
+          "red_corner": "Charity Case",
+          "white_corner": "Kansei Dorifto",
+          "result": "Red wins KO",
+          "old_rating_red": 989,
+          "old_rating_white": 1000,
+          "new_rating_red": 1009,
+          "new_rating_white": 983,
+          "change_red": 20,
+          "change_white": -17
+        },
+        {
+          "match_id": 16,
+          "timestamp": 1758332683,
+          "red_corner": "Charity Case",
+          "white_corner": "Ipseity",
+          "result": "Red wins KO",
+          "old_rating_red": 1009,
+          "old_rating_white": 1036,
+          "new_rating_red": 1029,
+          "new_rating_white": 1019,
+          "change_red": 20,
+          "change_white": -17
         }
       ],
       "driver_name": "Charity Case",
@@ -190,7 +256,7 @@
       "image": "/static/uploads/1757916149520_Charity_Case_transp.png"
     },
     "Ipseity": {
-      "rating": 1038,
+      "rating": 1019,
       "matches": [
         {
           "match_id": 8,
@@ -217,39 +283,123 @@
           "new_rating_white": 989,
           "change_red": 19,
           "change_white": -15
+        },
+        {
+          "match_id": 11,
+          "timestamp": 1758324764,
+          "red_corner": "Anubis",
+          "white_corner": "Ipseity",
+          "result": "White wins KO",
+          "old_rating_red": 983,
+          "old_rating_white": 1038,
+          "new_rating_red": 970,
+          "new_rating_white": 1055,
+          "change_red": -13,
+          "change_white": 17
+        },
+        {
+          "match_id": 13,
+          "timestamp": 1758326969,
+          "red_corner": "Ipseity",
+          "white_corner": "Thunderbird",
+          "result": "White wins JD",
+          "old_rating_red": 1055,
+          "old_rating_white": 984,
+          "new_rating_red": 1036,
+          "new_rating_white": 1003,
+          "change_red": -19,
+          "change_white": 19
+        },
+        {
+          "match_id": 16,
+          "timestamp": 1758332683,
+          "red_corner": "Charity Case",
+          "white_corner": "Ipseity",
+          "result": "Red wins KO",
+          "old_rating_red": 1009,
+          "old_rating_white": 1036,
+          "new_rating_red": 1029,
+          "new_rating_white": 1019,
+          "change_red": 20,
+          "change_white": -17
         }
       ],
       "driver_name": "William",
       "team_name": "Ghost",
       "weight_class": "Beetleweights",
-      "present": true,
+      "present": false,
       "image": "/static/uploads/1757916184106_Ipseity_transp.png"
     },
-    "Pizzabot": {
-      "rating": 1000,
-      "matches": [],
-      "driver_name": "Autumn",
-      "team_name": "Capybara Biggus Piggus",
-      "weight_class": "Beetleweights",
-      "present": true,
-      "image": "/static/uploads/1757920758914_pizzabot_transp.png"
-    },
     "Thunderbird": {
-      "rating": 1000,
-      "matches": [],
+      "rating": 1003,
+      "matches": [
+        {
+          "match_id": 12,
+          "timestamp": 1758325670,
+          "red_corner": "Thunderbird",
+          "white_corner": "Orders From the House (You're the Only Place That Feels like Home)",
+          "result": "White wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1000,
+          "new_rating_red": 984,
+          "new_rating_white": 1019,
+          "change_red": -16,
+          "change_white": 19
+        },
+        {
+          "match_id": 13,
+          "timestamp": 1758326969,
+          "red_corner": "Ipseity",
+          "white_corner": "Thunderbird",
+          "result": "White wins JD",
+          "old_rating_red": 1055,
+          "old_rating_white": 984,
+          "new_rating_red": 1036,
+          "new_rating_white": 1003,
+          "change_red": -19,
+          "change_white": 19
+        }
+      ],
       "driver_name": "Leo",
       "team_name": "Ping Industries",
       "weight_class": "Beetleweights",
-      "present": true,
+      "present": false,
       "image": "/static/uploads/1757920941973_thunderbird_transp.png"
     },
     "Orders From the House (You're the Only Place That Feels like Home)": {
-      "rating": 1000,
-      "matches": [],
+      "rating": 1036,
+      "matches": [
+        {
+          "match_id": 12,
+          "timestamp": 1758325670,
+          "red_corner": "Thunderbird",
+          "white_corner": "Orders From the House (You're the Only Place That Feels like Home)",
+          "result": "White wins KO",
+          "old_rating_red": 1000,
+          "old_rating_white": 1000,
+          "new_rating_red": 984,
+          "new_rating_white": 1019,
+          "change_red": -16,
+          "change_white": 19
+        },
+        {
+          "match_id": 14,
+          "timestamp": 1758328013,
+          "red_corner": "Orders From the House (You're the Only Place That Feels like Home)",
+          "white_corner": "Anubis",
+          "result": "Red wins KO",
+          "old_rating_red": 1019,
+          "old_rating_white": 970,
+          "new_rating_red": 1036,
+          "new_rating_white": 956,
+          "change_red": 17,
+          "change_white": -14
+        }
+      ],
       "driver_name": "William",
       "team_name": "Ghost",
       "weight_class": "Beetleweights",
-      "present": true,
+      "present": false,
       "image": "/static/uploads/1757921064528_orders_from_the_house_transp.png"
     }
   },
@@ -331,9 +481,87 @@
       "new_rating_white": 989,
       "change_red": 19,
       "change_white": -15
+    },
+    {
+      "match_id": 11,
+      "timestamp": 1758324764,
+      "red_corner": "Anubis",
+      "white_corner": "Ipseity",
+      "result": "White wins KO",
+      "old_rating_red": 983,
+      "old_rating_white": 1038,
+      "new_rating_red": 970,
+      "new_rating_white": 1055,
+      "change_red": -13,
+      "change_white": 17
+    },
+    {
+      "match_id": 12,
+      "timestamp": 1758325670,
+      "red_corner": "Thunderbird",
+      "white_corner": "Orders From the House (You're the Only Place That Feels like Home)",
+      "result": "White wins KO",
+      "old_rating_red": 1000,
+      "old_rating_white": 1000,
+      "new_rating_red": 984,
+      "new_rating_white": 1019,
+      "change_red": -16,
+      "change_white": 19
+    },
+    {
+      "match_id": 13,
+      "timestamp": 1758326969,
+      "red_corner": "Ipseity",
+      "white_corner": "Thunderbird",
+      "result": "White wins JD",
+      "old_rating_red": 1055,
+      "old_rating_white": 984,
+      "new_rating_red": 1036,
+      "new_rating_white": 1003,
+      "change_red": -19,
+      "change_white": 19
+    },
+    {
+      "match_id": 14,
+      "timestamp": 1758328013,
+      "red_corner": "Orders From the House (You're the Only Place That Feels like Home)",
+      "white_corner": "Anubis",
+      "result": "Red wins KO",
+      "old_rating_red": 1019,
+      "old_rating_white": 970,
+      "new_rating_red": 1036,
+      "new_rating_white": 956,
+      "change_red": 17,
+      "change_white": -14
+    },
+    {
+      "match_id": 15,
+      "timestamp": 1758331557,
+      "red_corner": "Charity Case",
+      "white_corner": "Kansei Dorifto",
+      "result": "Red wins KO",
+      "old_rating_red": 989,
+      "old_rating_white": 1000,
+      "new_rating_red": 1009,
+      "new_rating_white": 983,
+      "change_red": 20,
+      "change_white": -17
+    },
+    {
+      "match_id": 16,
+      "timestamp": 1758332683,
+      "red_corner": "Charity Case",
+      "white_corner": "Ipseity",
+      "result": "Red wins KO",
+      "old_rating_red": 1009,
+      "old_rating_white": 1036,
+      "new_rating_red": 1029,
+      "new_rating_white": 1019,
+      "change_red": 20,
+      "change_white": -17
     }
   ],
-  "next_match_id": 11,
+  "next_match_id": 17,
   "settings": {
     "K": 32,
     "ko_weight": 1.1
