@@ -44,7 +44,7 @@
           <div class="small">Completed {{ match.completed_at | datetimefromts }}</div>
           {% endif %}
           <div class="small">
-            {% if match.decision and 'KO' in match.decision %}
+            {% if match.decision and match.decision|lower == 'ko' %}
               <span class="badge" style="background:#222;color:#fff">Knockout</span>
             {% endif %}
             {% if match.winner_name %}
@@ -63,7 +63,7 @@
                 {{ card.scoreline }} &mdash; {{ card.breakdown }}
               </li>
               {% endfor %}
-            {% elif match.decision and 'KO' in match.decision %}
+            {% elif match.decision and match.decision|lower == 'ko' %}
               <li>
                 <span class="badge" style="background:#222;color:#fff">Knockout</span>
                 <strong>{{ match.winner_name }}</strong> wins by KO

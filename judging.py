@@ -1,6 +1,7 @@
 import time
 import uuid
 from typing import Dict, Tuple, Any, List, Optional
+from storage import load_all
 
 CATEGORY_SPECS = [
     {"key": "damage", "label": "Damage", "max": 8},
@@ -250,19 +251,91 @@ def build_match_payload(match: Optional[Dict[str, Any]]) -> Optional[Dict[str, A
 
 
 def build_state_payload(state: Dict[str, Any], history_limit: Optional[int] = None) -> Dict[str, Any]:
-    history = state.get("history", []) or []
+    """Build the payload for judge panels.
+
+    Augmentation: include recent KO fights (entered via Elo submission) so that
+    they appear in the unified results list even if they never went through the
+    judging subsystem. We synthesize a minimal match payload for those entries.
+    """
+    raw_history = state.get("history", []) or []
+
+    # Collect existing match identity triples to avoid duplicates
+    seen_keys = set()
+    normalized_history: List[Dict[str, Any]] = []
+    for entry in raw_history:
+        if not isinstance(entry, dict):
+            continue
+        key = (
+            str(entry.get("weight_class", "")).strip().lower(),
+            str(entry.get("red", "")).strip().lower(),
+            str(entry.get("white", "")).strip().lower(),
+            int(entry.get("completed_at") or entry.get("created_at") or 0),
+        )
+        seen_keys.add(key)
+        normalized_history.append(entry)
+
+    # Load Elo DBs and harvest KO results not already represented.
+    try:
+        all_dbs = load_all()
+    except Exception:
+        all_dbs = {}
+    for wc, db in (all_dbs or {}).items():
+        hist = (db or {}).get("history", []) or []
+        for h in reversed(hist[-150:]):  # limit recent slice per class for perf
+            result = h.get("result")
+            if not isinstance(result, str):
+                continue
+            if "KO" not in result:
+                continue  # only augment KO fights
+            red = h.get("red_corner")
+            white = h.get("white_corner")
+            ts = int(h.get("timestamp") or 0)
+            key = (str(wc).strip().lower(), str(red).strip().lower(), str(white).strip().lower(), ts)
+            if key in seen_keys:
+                continue
+            # Determine winner name & decision label
+            if result.startswith("Red wins KO"):
+                winner_name = red
+                decision = "ko"
+            elif result.startswith("White wins KO"):
+                winner_name = white
+                decision = "ko"
+            else:
+                winner_name = None
+                decision = "ko"
+            synth = {
+                "match_id": f"elo_{wc}_{h.get('match_id')}",
+                "weight_class": wc,
+                "red": red,
+                "white": white,
+                "created_at": ts,
+                "completed_at": ts,
+                "judges": [],
+                "pending_judges": [],
+                "is_complete": True,
+                "headline": f"{winner_name} wins via KO" if winner_name else "KO recorded",
+                "winner": "red" if winner_name == red else ("white" if winner_name == white else "draw"),
+                "winner_name": winner_name,
+                "decision": "KO",
+                "scorecard_strings": [],
+                "counts": {},
+            }
+            normalized_history.append(synth)
+            seen_keys.add(key)
+
+    # Sort combined history by completion timestamp desc
+    normalized_history.sort(key=lambda e: int(e.get("completed_at") or e.get("created_at") or 0), reverse=True)
+
     if history_limit is not None:
-        history = history[:history_limit]
+        normalized_history = normalized_history[:history_limit]
+
     meta = state.get("_meta") or {}
-    meta_payload = {
-        "version": int(meta.get("version", 0)),
-        "updated_at": meta.get("updated_at"),
-    }
+    meta_payload = {"version": int(meta.get("version", 0)), "updated_at": meta.get("updated_at")}
     return {
         "judge_count": JUDGE_COUNT,
         "judge_labels": {i: f"Judge {i}" for i in range(1, JUDGE_COUNT + 1)},
         "current": build_match_payload(state.get("current")),
-        "history": [build_match_payload(entry) for entry in history],
+        "history": [build_match_payload(entry) for entry in normalized_history],
         "meta": meta_payload,
     }
 
