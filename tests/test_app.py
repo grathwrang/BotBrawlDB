@@ -13,9 +13,12 @@ class AppRoutesTestCase(unittest.TestCase):
     def setUp(self):
         bot_app.app.config["TESTING"] = True
         self.client = bot_app.app.test_client()
+
+        # Create an isolated temp directory for all storage files.
         self._tempdir = tempfile.TemporaryDirectory()
         self.addCleanup(self._tempdir.cleanup)
 
+        # Build patched file paths inside the temp directory.
         patched_judging_fp = os.path.join(self._tempdir.name, "judging.json")
         patched_lock_fp = os.path.join(self._tempdir.name, "judging.lock")
         patched_schedule_fp = os.path.join(self._tempdir.name, "schedule.json")
@@ -24,6 +27,7 @@ class AppRoutesTestCase(unittest.TestCase):
             for wc in storage.DB_FILES
         }
 
+        # Patch storage module constants so all I/O is sandboxed.
         self._patches = [
             mock.patch.object(storage, "DATA_DIR", self._tempdir.name),
             mock.patch.object(storage, "SCHEDULE_FP", patched_schedule_fp),
@@ -31,9 +35,9 @@ class AppRoutesTestCase(unittest.TestCase):
             mock.patch.object(storage, "JUDGING_LOCK_FP", patched_lock_fp),
             mock.patch.object(storage, "DB_FILES", patched_db_files),
         ]
-        for patch in self._patches:
-            patch.start()
-            self.addCleanup(patch.stop)
+        for p in self._patches:
+            p.start()
+            self.addCleanup(p.stop)
 
         storage.ensure_dirs()
 
@@ -87,7 +91,7 @@ class AppRoutesTestCase(unittest.TestCase):
         original = self.client.get("/api/judge/state").get_json()
         original_version = original["meta"]["version"]
 
-        storage.update_judging_state(lambda state: state)
+        storage.update_judging_state(lambda s: s)
 
         after = self.client.get("/api/judge/state").get_json()
         self.assertEqual(after["meta"]["version"], original_version)
