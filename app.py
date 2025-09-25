@@ -766,16 +766,39 @@ def schedule_public():
                 else: s["losses"]+=1; s["ko_losses"]+= int(is_ko)
             return s
         rs = stats(db, red); ws = stats(db, white)
-        top_info = {
+    top_info = {
+        "weight_class": wc,
+        "red": {"name": red, "elo": r.get("rating", DEFAULT_RATING), "driver": r.get("driver_name",""), "team": r.get("team_name",""),
+            "wins": rs["wins"], "losses": rs["losses"], "draws": rs["draws"], "ko_wins": rs["ko_wins"], "ko_losses": rs["ko_losses"],
+            "image": r.get("image", "")},
+        "white": {"name": white, "elo": w.get("rating", DEFAULT_RATING), "driver": w.get("driver_name",""), "team": w.get("team_name",""),
+            "wins": ws["wins"], "losses": ws["losses"], "draws": ws["draws"], "ko_wins": ws["ko_wins"], "ko_losses": ws["ko_losses"],
+            "image": w.get("image", "")},
+    }
+    # Build enriched schedule list with images for thumbnails
+    enriched_schedule = []
+    for idx, card in enumerate(schedule_list):
+        wc = card.get("weight_class")
+        red = card.get("red")
+        white = card.get("white")
+        red_img = ""; white_img = ""
+        try:
+            db_wc = load_db(wc) if wc in WEIGHT_CLASSES else None
+            robots_wc = db_wc.get("robots", {}) if db_wc else {}
+            red_img = robots_wc.get(red, {}).get("image", "") if red in robots_wc else ""
+            white_img = robots_wc.get(white, {}).get("image", "") if white in robots_wc else ""
+        except Exception:
+            pass
+        enriched_schedule.append({
             "weight_class": wc,
-            "red": {"name": red, "elo": r.get("rating", DEFAULT_RATING), "driver": r.get("driver_name",""), "team": r.get("team_name",""),
-                    "wins": rs["wins"], "losses": rs["losses"], "draws": rs["draws"], "ko_wins": rs["ko_wins"], "ko_losses": rs["ko_losses"]},
-            "white": {"name": white, "elo": w.get("rating", DEFAULT_RATING), "driver": w.get("driver_name",""), "team": w.get("team_name",""),
-                    "wins": ws["wins"], "losses": ws["losses"], "draws": ws["draws"], "ko_wins": ws["ko_wins"], "ko_losses": ws["ko_losses"]},
-        }
+            "red": red,
+            "white": white,
+            "red_image": red_img,
+            "white_image": white_img,
+        })
     return render_template(
         "public_schedule.html",
-        schedule=schedule_list,
+        schedule=enriched_schedule,
         top=top_info,
         judge_panel=build_state_payload(state, history_limit=10),
         judge_labels=JUDGE_LABELS,

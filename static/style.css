@@ -103,6 +103,22 @@ dialog::backdrop{background:rgba(0,0,0,0.65)}
 .judge-fight-info{text-align:center;display:flex;flex-direction:column;gap:6px;justify-content:center}
 .judge-vs{font-family:'Bank Gothic','BankGothic Md BT',Michroma,'Eurostile','Square 721',sans-serif;font-size:40px;color:var(--red)}
 
+/* Public schedule now card & thumbnails */
+.now-card .now-grid{display:grid;grid-template-columns:1fr minmax(120px,140px) 1fr;gap:20px;align-items:stretch}
+.now-robot{display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;background:var(--panel2);border:1px solid #2a2e33;padding:10px;border-radius:6px}
+.now-robot-image{width:100%;max-width:240px;max-height:180px;object-fit:contain;background:#111315;border:1px solid #2a2e33;border-radius:6px;padding:4px}
+.now-center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.now-vs{font-family:'Bank Gothic','BankGothic Md BT',Michroma,'Eurostile','Square 721',sans-serif;font-size:36px;color:var(--red)}
+.schedule-table .hidden-first{opacity:0;height:0;transform:scaleY(0);font-size:0;padding:0;border:none}
+.schedule-table .hidden-first > *{padding:0;border:none}
+.robot-thumb-wrapper{display:inline-flex;align-items:center;gap:6px}
+.robot-thumb{width:26px;height:26px;object-fit:cover;border:1px solid #2a2e33;border-radius:4px;background:#111315}
+@media (max-width: 900px){
+  .now-card .now-grid{grid-template-columns:1fr;}
+  .now-vs{font-size:28px}
+  .now-robot-image{max-width:180px}
+}
+
 .judge-controls{background:var(--panel2);border:1px solid #2a2e33;border-radius:6px;padding:12px;display:grid;gap:12px}
 .judge-name-field{display:flex;flex-direction:column;gap:6px;max-width:360px}
 .judge-slider-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}

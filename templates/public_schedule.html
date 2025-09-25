@@ -1,43 +1,60 @@
 {% extends "public_base.html" %}
 {% block body %}
   <div class="page-title">Fight Schedule</div>
-  <p class="small" style="margin:6px 0 10px">Double click a robot for more info!</p>
-
-  <div class="panel">
-    <h3 style="margin:6px 0 10px;color:#e53935">Tonight's Schedule</h3>
-    <table>
-      <thead><tr><th class="center">#</th><th class="center">Weight</th><th>Red</th><th>White</th></tr></thead>
-      <tbody>
-      {% for m in schedule %}
-        <tr>
-          <td class="center">{{ loop.index }}</td>
-          <td class="center">{{ m.weight_class }}</td>
-          <td class="name-cell"><span class="robot-link" data-wc="{{ m.weight_class }}" data-name="{{ m.red }}">{{ m.red }}</span></td>
-          <td class="name-cell"><span class="robot-link" data-wc="{{ m.weight_class }}" data-name="{{ m.white }}">{{ m.white }}</span></td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  </div>
+  <p class="small" style="margin:6px 0 14px">Double click a robot for more info!</p>
 
   {% if top %}
-  <div class="panel" style="margin-top:12px">
+  <div class="panel now-card">
     <h3 style="margin:6px 0 10px;color:#e53935">Now</h3>
-    <div class="grid grid-3">
-      <div>
-        <div class="name-cell" style="font-size:22px"><span class="name-cell robot-link" data-wc="{{ top.weight_class }}" data-name="{{ top.red.name }}">{{ top.red.name }}</span></div>
-        <div class="small">{{ top.red.driver }} — {{ top.red.team }}</div>
+    <div class="now-grid">
+      <div class="now-robot now-robot-red">
+        {% if top.red.image %}<img class="now-robot-image" src="{{ top.red.image }}" alt="{{ top.red.name }}">{% endif %}
+        <div class="now-name name-cell"><span class="robot-link" data-wc="{{ top.weight_class }}" data-name="{{ top.red.name }}">{{ top.red.name }}</span></div>
+        <div class="small">{{ top.red.driver }}{% if top.red.team %} — {{ top.red.team }}{% endif %}</div>
         <div class="small">Elo {{ top.red.elo }} · W-L-D {{ top.red.wins }}-{{ top.red.losses }}-{{ top.red.draws }} · KOs {{ top.red.ko_wins }}</div>
       </div>
-      <div class="center" style="align-self:center"><span class="badge">{{ top.weight_class }}</span></div>
-      <div class="right">
-        <div class="name-cell" style="font-size:22px"><span class="name-cell robot-link" data-wc="{{ top.weight_class }}" data-name="{{ top.white.name }}">{{ top.white.name }}</span></div>
-        <div class="small">{{ top.white.driver }} — {{ top.white.team }}</div>
+      <div class="now-center">
+        <span class="badge">{{ top.weight_class }}</span>
+        <div class="now-vs">VS</div>
+      </div>
+      <div class="now-robot now-robot-white">
+        {% if top.white.image %}<img class="now-robot-image" src="{{ top.white.image }}" alt="{{ top.white.name }}">{% endif %}
+        <div class="now-name name-cell"><span class="robot-link" data-wc="{{ top.weight_class }}" data-name="{{ top.white.name }}">{{ top.white.name }}</span></div>
+        <div class="small">{{ top.white.driver }}{% if top.white.team %} — {{ top.white.team }}{% endif %}</div>
         <div class="small">Elo {{ top.white.elo }} · W-L-D {{ top.white.wins }}-{{ top.white.losses }}-{{ top.white.draws }} · KOs {{ top.white.ko_wins }}</div>
       </div>
     </div>
   </div>
   {% endif %}
+
+  <div class="panel" style="margin-top:12px">
+    <h3 style="margin:6px 0 10px;color:#e53935">Tonight's Schedule</h3>
+    <table class="schedule-table">
+      <thead><tr><th class="center">#</th><th class="center">Weight</th><th>Red</th><th>White</th></tr></thead>
+      <tbody>
+      {% for m in schedule %}
+        <tr {% if loop.first %}class="hidden-first" aria-hidden="true"{% endif %}>
+          <td class="center">{{ loop.index }}</td>
+          <td class="center">{{ m.weight_class }}</td>
+          <td class="name-cell">
+            <span class="robot-thumb-wrapper">
+              <span class="robot-link" data-wc="{{ m.weight_class }}" data-name="{{ m.red }}">
+                {% if m.red_image %}<img class="robot-thumb" src="{{ m.red_image }}" alt="{{ m.red }} thumbnail">{% endif %}{{ m.red }}
+              </span>
+            </span>
+          </td>
+          <td class="name-cell">
+            <span class="robot-thumb-wrapper">
+              <span class="robot-link" data-wc="{{ m.weight_class }}" data-name="{{ m.white }}">
+                {% if m.white_image %}<img class="robot-thumb" src="{{ m.white_image }}" alt="{{ m.white }} thumbnail">{% endif %}{{ m.white }}
+              </span>
+            </span>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
   <div style="margin-top:12px">
     {% with panel=judge_panel, view='public', category_specs=category_specs, judge_labels=judge_labels %}
@@ -45,14 +62,25 @@
     {% endwith %}
   </div>
 
+  <script id="judging-live-config" type="application/json">{{ {
+    'version': judge_panel.meta.version | default(0),
+    'stateUrl': url_for('judge_state_api'),
+    'reload': True,
+    'interval': 5000
+  } | tojson }}</script>
   <script>
-    window.JUDGING_LIVE_CONFIGS = window.JUDGING_LIVE_CONFIGS || [];
-    window.JUDGING_LIVE_CONFIGS.push({
-      version: {{ judge_panel.meta.version | default(0) }},
-      stateUrl: "{{ url_for('judge_state_api') }}",
-      reload: true,
-      interval: 5000,
-    });
+    (function(){
+      try {
+        var el = document.getElementById('judging-live-config');
+        if (el) {
+          var cfg = JSON.parse(el.textContent || '{}');
+          if (cfg && typeof cfg === 'object') {
+            window.JUDGING_LIVE_CONFIGS = window.JUDGING_LIVE_CONFIGS || [];
+            window.JUDGING_LIVE_CONFIGS.push(cfg);
+          }
+        }
+      } catch(e){ /* swallow */ }
+    })();
   </script>
   <script src="{{ url_for('static', filename='judging_live.js') }}"></script>
 {% endblock %}
