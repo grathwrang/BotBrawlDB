@@ -9,12 +9,6 @@
 </head>
 <body>
   <div class="container">
-    <div class="top-tabs">
-      <a href="{{ url_for('judge_page', judge_id=1) }}" class="{{ 'active' if active_judge == 1 else '' }}">Judge 1</a>
-      <a href="{{ url_for('judge_page', judge_id=2) }}" class="{{ 'active' if active_judge == 2 else '' }}">Judge 2</a>
-      <a href="{{ url_for('judge_page', judge_id=3) }}" class="{{ 'active' if active_judge == 3 else '' }}">Judge 3</a>
-      <a href="{{ url_for('schedule') }}" style="margin-left:auto">Schedule</a>
-    </div>
     {% block body %}{% endblock %}
   </div>
 </body>

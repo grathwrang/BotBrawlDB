@@ -44,11 +44,17 @@ def sanitize_slider_values(raw: Dict[str, Any]) -> Dict[str, int]:
     return sanitized
 
 
-def create_judge_record(judge_id: int, sliders: Dict[str, Any], submitted_at: Optional[int] = None) -> Dict[str, Any]:
+def create_judge_record(
+    judge_id: int,
+    sliders: Dict[str, Any],
+    judge_name: Optional[str] = None,
+    submitted_at: Optional[int] = None,
+) -> Dict[str, Any]:
     sanitized = sanitize_slider_values(sliders)
     scores: Dict[str, Dict[str, Any]] = {}
     totals = {"red": 0, "white": 0}
     breakdown_parts: List[str] = []
+    name_value = (judge_name or "").strip()
     for spec in CATEGORY_SPECS:
         key = spec["key"]
         max_val = spec["max"]
@@ -72,6 +78,7 @@ def create_judge_record(judge_id: int, sliders: Dict[str, Any], submitted_at: Op
     record = {
         "judge_id": int(judge_id),
         "submitted_at": int(submitted_at if submitted_at is not None else time.time()),
+        "judge_name": name_value,
         "sliders": sanitized,
         "scores": scores,
         "totals": totals,
@@ -87,7 +94,12 @@ def _normalize_judge_record(record: Dict[str, Any], judge_id: int) -> Tuple[Dict
     rec["judge_id"] = int(rec.get("judge_id", judge_id) or judge_id)
     sliders = rec.get("sliders") or {}
     submitted_at = rec.get("submitted_at")
-    normalized = create_judge_record(rec["judge_id"], sliders, submitted_at=submitted_at)
+    normalized = create_judge_record(
+        rec["judge_id"],
+        sliders,
+        judge_name=rec.get("judge_name"),
+        submitted_at=submitted_at,
+    )
     changed = normalized != record
     return normalized, changed
 
