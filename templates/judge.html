@@ -30,6 +30,10 @@
 
     <div class="judge-controls" data-match-id="{{ current.match_id }}" data-judge-id="{{ judge_id }}">
       <p class="small">Use the sliders to allocate points to the <strong>Red</strong> and <strong>White</strong> corners.</p>
+      <div class="judge-name-field">
+        <label for="judge-name">Your Name</label>
+        <input id="judge-name" name="judge_name" type="text" placeholder="Enter your name" autocomplete="name" value="{{ current.existing_submission.judge_name if current.existing_submission and current.existing_submission.judge_name is defined else '' }}">
+      </div>
       <div class="judge-slider-grid">
         {% for spec in categories %}
         {% set slider = current.existing_submission.sliders[spec.key] if current.existing_submission and current.existing_submission.sliders is defined and spec.key in current.existing_submission.sliders else (spec.max // 2) %}
@@ -66,7 +70,8 @@
       <ul>
         {% for card in current.judges %}
         <li>
-          <strong>{{ judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id) }}:</strong>
+          {% set display_name = card.judge_name if card.judge_name else (judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id)) %}
+          <strong>{{ display_name }}:</strong>
           {{ card.scoreline }} — {{ card.breakdown }}
         </li>
         {% endfor %}
@@ -99,7 +104,8 @@
             {% endif %}
             <ul>
               {% for card in match.judges %}
-              <li><strong>{{ judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id) }}:</strong> {{ card.scoreline }} — {{ card.breakdown }}</li>
+              {% set display_name = card.judge_name if card.judge_name else (judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id)) %}
+              <li><strong>{{ display_name }}:</strong> {{ card.scoreline }} — {{ card.breakdown }}</li>
               {% endfor %}
             </ul>
           </div>

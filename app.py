@@ -343,7 +343,7 @@ def export_wc_csv(wc):
 
 @app.get("/schedule")
 def schedule():
-    state, schedule_data, schedule_list = get_synced_judging_state()
+    state, _, schedule_list = get_synced_judging_state()
     all_dbs = load_all()
     presence = []
     for w, db in all_dbs.items():
@@ -487,7 +487,11 @@ def schedule_judge_history_update():
 
     entry = history[target_index]
     entry.setdefault("judges", {})
-    entry["judges"][str(judge_id)] = create_judge_record(judge_id, sliders)
+    entry["judges"][str(judge_id)] = create_judge_record(
+        judge_id,
+        sliders,
+        judge_name=request.form.get("judge_name"),
+    )
     normalized_entry, _ = normalize_match(entry)
     if normalized_entry is not None:
         history[target_index] = normalized_entry
@@ -565,9 +569,12 @@ def judge_submit(judge_id):
         return jsonify({"error": "Unknown judge"}), 404
     data = request.get_json(silent=True) or {}
     sliders = data.get("sliders", {})
+    judge_name = (data.get("judge_name") or "").strip()
     match_id = data.get("match_id")
-    state, schedule_data, schedule_list = get_synced_judging_state()
-    judge_record = create_judge_record(judge_id, sliders)
+    if not judge_name:
+        return jsonify({"error": "Judge name required"}), 400
+    state, _, schedule_list = get_synced_judging_state()
+    judge_record = create_judge_record(judge_id, sliders, judge_name=judge_name)
 
     error_payload = {"error": "No active match"}
     error_status = 400
@@ -611,21 +618,59 @@ def judge_submit(judge_id):
 # -------- Overlay endpoint for current top match --------
 @app.get("/overlay")
 def overlay():
-    sched = load_schedule().get("list", [])
-    if not sched:
-        return jsonify({"status":"empty"})
-    top = sched[0]
-    wc = top.get("weight_class"); red = top.get("red"); white = top.get("white")
-    db = load_db(wc)
-    robots = db.get("robots", {})
-    r = robots.get(red, {}); w = robots.get(white, {})
-    r_stats = robot_stats(db, red); w_stats = robot_stats(db, white)
+    state, _, schedule_list = get_synced_judging_state()
+    current_match = state.get("current") if isinstance(state, dict) else None
+    if not current_match:
+        if not schedule_list:
+            return jsonify({"status": "empty"})
+        top_card = schedule_list[0]
+        wc = top_card.get("weight_class")
+        red_name = top_card.get("red")
+        white_name = top_card.get("white")
+        return jsonify({
+            "status": "pending",
+            "match_id": None,
+            "weight_class": wc,
+            "red": robot_display(wc, red_name),
+            "white": robot_display(wc, white_name),
+            "headline": "Awaiting judges",
+            "judges": [],
+            "pending_judges": JUDGE_IDS,
+        })
+
+    normalized_current, _ = normalize_match(current_match)
+    match_data = normalized_current or current_match
+    wc = match_data.get("weight_class")
+    red_name = match_data.get("red")
+    white_name = match_data.get("white")
+    summary = match_data.get("summary") or {}
+    judge_cards = []
+    for card in summary.get("judge_cards", []):
+        judge_cards.append({
+            "judge_id": card.get("judge_id"),
+            "judge_name": card.get("judge_name", ""),
+            "winner": card.get("winner"),
+            "scoreline": card.get("scoreline"),
+            "breakdown": card.get("breakdown"),
+            "totals": card.get("totals", {}),
+            "submitted_at": card.get("submitted_at"),
+        })
+
     payload = {
+        "status": "active",
+        "match_id": match_data.get("match_id"),
         "weight_class": wc,
-        "red": {"name": red, "elo": r.get("rating", DEFAULT_RATING), "driver": r.get("driver_name",""), "team": r.get("team_name",""), "wins": r_stats["wins"], "losses": r_stats["losses"], "draws": r_stats["draws"], "ko_wins": r_stats["ko_wins"], "ko_losses": r_stats["ko_losses"]},
-        "white": {"name": white, "elo": w.get("rating", DEFAULT_RATING), "driver": w.get("driver_name",""), "team": w.get("team_name",""), "wins": w_stats["wins"], "losses": w_stats["losses"], "draws": w_stats["draws"], "ko_wins": w_stats["ko_wins"], "ko_losses": w_stats["ko_losses"]}
+        "headline": summary.get("headline"),
+        "winner": summary.get("winner"),
+        "winner_name": summary.get("winner_name"),
+        "decision": summary.get("decision"),
+        "counts": summary.get("counts", {}),
+        "is_complete": summary.get("is_complete"),
+        "pending_judges": summary.get("pending_judges", []),
+        "red": robot_display(wc, red_name),
+        "white": robot_display(wc, white_name),
+        "judges": judge_cards,
     }
-    # JSON is programmatically digestible; also render pretty text if desired:
     return jsonify(payload)
 
 

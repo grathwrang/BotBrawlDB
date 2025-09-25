@@ -89,6 +89,7 @@ dialog::backdrop{background:rgba(0,0,0,0.65)}
 .judge-vs{font-family:'Bank Gothic','BankGothic Md BT',Michroma,'Eurostile','Square 721',sans-serif;font-size:40px;color:var(--red)}
 
 .judge-controls{background:var(--panel2);border:1px solid #2a2e33;border-radius:6px;padding:12px;display:grid;gap:12px}
+.judge-name-field{display:flex;flex-direction:column;gap:6px;max-width:360px}
 .judge-slider-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .judge-slider{background:#1b1d21;border:1px solid #2a2e33;border-radius:6px;padding:10px;display:grid;gap:6px}
 .judge-slider-header{display:flex;align-items:center;justify-content:space-between;font-weight:600}
