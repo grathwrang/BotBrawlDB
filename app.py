@@ -745,6 +745,8 @@ def debug_robots(wc):
 @app.get("/SchedulePublic")
 def schedule_public():
     state, schedule_data, schedule_list = get_synced_judging_state()
+    if not isinstance(schedule_list, list):
+        schedule_list = []
     top = schedule_list[0] if schedule_list else None
     # enrich top with metadata
     top_info = None
@@ -777,7 +779,9 @@ def schedule_public():
     }
     # Build enriched schedule list with images for thumbnails
     enriched_schedule = []
-    for idx, card in enumerate(schedule_list):
+    for idx, card in enumerate(schedule_list or []):
+        if not isinstance(card, dict):
+            continue
         wc = card.get("weight_class")
         red = card.get("red")
         white = card.get("white")

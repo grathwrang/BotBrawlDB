@@ -29,6 +29,7 @@
 
   <div class="panel" style="margin-top:12px">
     <h3 style="margin:6px 0 10px;color:#e53935">Tonight's Schedule</h3>
+    {% if schedule and schedule|length > 0 %}
     <table class="schedule-table">
       <thead><tr><th class="center">#</th><th class="center">Weight</th><th>Red</th><th>White</th></tr></thead>
       <tbody>
@@ -54,6 +55,9 @@
       {% endfor %}
       </tbody>
     </table>
+    {% else %}
+      <p class="small muted" style="margin:4px 0 0;">No fights are scheduled yet.</p>
+    {% endif %}
   </div>
 
   <div style="margin-top:12px">
