@@ -55,13 +55,20 @@
             {% endif %}
           </div>
           <ul class="judge-card-list">
-            {% for card in match.judges %}
-            {% set display_name = card.judge_name if card.judge_name else (judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id)) %}
-            <li>
-              <strong>{{ display_name }}:</strong>
-              {{ card.scoreline }} &mdash; {{ card.breakdown }}
-            </li>
-            {% endfor %}
+            {% if match.judges and match.judges|length > 0 %}
+              {% for card in match.judges %}
+              {% set display_name = card.judge_name if card.judge_name else (judge_labels[card.judge_id] if card.judge_id in judge_labels else ('Judge ' ~ card.judge_id)) %}
+              <li>
+                <strong>{{ display_name }}:</strong>
+                {{ card.scoreline }} &mdash; {{ card.breakdown }}
+              </li>
+              {% endfor %}
+            {% elif match.decision and 'KO' in match.decision %}
+              <li>
+                <span class="badge" style="background:#222;color:#fff">Knockout</span>
+                <strong>{{ match.winner_name }}</strong> wins by KO
+              </li>
+            {% endif %}
           </ul>
           {% if view == 'admin' %}
           <div class="judge-edit-forms">
