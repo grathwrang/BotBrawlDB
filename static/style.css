@@ -45,6 +45,12 @@ td.right,th.right{text-align:right}
 .footer form,label,.footer select,.footer input{font-size:13px}
 .footer label{margin:0;display:flex;flex-direction:column;gap:2px;font-size:12px}
 .footer h3{font-size:16px}
+.footer .footer-primary-actions{align-items:flex-end}
+.footer .footer-primary-actions form{margin:0}
+.footer .footer-generate-form{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;padding:6px 8px;border:1px solid #2a2e33;border-radius:6px;background:#151719}
+.footer .footer-generate-fields{display:flex;gap:8px;flex-wrap:wrap}
+.footer .footer-generate-form label{min-width:140px}
+.footer .footer-clear-form{align-self:flex-end}
 .footer .footer-manual-add{margin-top:8px !important;padding-top:4px;border-top:1px solid #2a2e33}
 .footer .footer-manual-add h3{font-size:15px}
 .footer .footer-manual-add form{gap:6px !important}
