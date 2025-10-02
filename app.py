@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file, flash
 import time, os, copy
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from werkzeug.utils import secure_filename
 from elo import get_expected, get_k_for_robot, DEFAULT_RATING, DEFAULT_K, KO_WEIGHT
 from storage import (
@@ -42,8 +44,7 @@ JUDGE_LABELS = {i: f"Judge {i}" for i in JUDGE_IDS}
 @app.template_filter('datetimefromts')
 def datetimefromts(ts):
     try:
-        import datetime
-        return datetime.datetime.fromtimestamp(int(ts)).strftime('%Y-%m-%d %H:%M:%S')
+        return datetime.fromtimestamp(int(ts), ZoneInfo("America/Toronto")).strftime('%Y-%m-%d %H:%M:%S')
     except Exception:
         return ts
 
