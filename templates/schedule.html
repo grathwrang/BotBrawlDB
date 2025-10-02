@@ -64,26 +64,6 @@
       </tbody>
     </table>
 
-    <hr class="sep">
-
-    <form method="post" action="/schedule/generate" class="grid grid-2">
-      <label>
-        Matches / Robot
-        <input type="number" name="matchesPerRobot" value="1" min="1" max="10">
-      </label>
-      <label>
-        Interleave Classes
-        <select name="interleave">
-          <option value="1" selected>Yes</option>
-          <option value="0">No</option>
-        </select>
-      </label>
-      <button class="btn btn-green" type="submit">Generate</button>
-    </form>
-
-    <form method="post" action="/schedule/clear" style="margin-top:8px">
-      <button class="btn btn-red" type="submit">Clear</button>
-    </form>
   </div>
 
   <div style="margin-top:12px;">
@@ -106,7 +86,7 @@
 
   <!-- Footer Controls -->
   <div class="footer">
-    <div class="row">
+    <div class="row footer-primary-actions">
       <span class="badge">
         {% if top %}
           Top: {{ top.red }} vs {{ top.white }} ({{ top.weight_class }})
@@ -114,6 +94,27 @@
           Schedule empty
         {% endif %}
       </span>
+
+      <form method="post" action="/schedule/generate" class="footer-generate-form">
+        <div class="footer-generate-fields">
+          <label>
+            Matches / Robot
+            <input type="number" name="matchesPerRobot" value="1" min="1" max="10">
+          </label>
+          <label>
+            Interleave Classes
+            <select name="interleave">
+              <option value="1" selected>Yes</option>
+              <option value="0">No</option>
+            </select>
+          </label>
+        </div>
+        <button class="btn btn-green" type="submit">Generate</button>
+      </form>
+
+      <form method="post" action="/schedule/clear" class="footer-clear-form">
+        <button class="btn btn-red" type="submit">Clear</button>
+      </form>
 
       <form method="post" action="/submit_match" style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
         <input type="hidden" name="popFromSchedule" value="1">
