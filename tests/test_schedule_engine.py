@@ -1,6 +1,34 @@
 import schedule_engine
 
 
+def test_generate_loads_db_when_not_provided(monkeypatch):
+    sample_db = {
+        "feather": {
+            "robots": {
+                "Alpha": {"present": True, "rating": 1000},
+                "Bravo": {"present": True, "rating": 1000},
+            },
+            "history": [],
+        }
+    }
+
+    calls = {"count": 0}
+
+    def fake_load_all():
+        calls["count"] += 1
+        return sample_db
+
+    monkeypatch.setattr(schedule_engine, "_load_all_dbs", fake_load_all)
+
+    schedule = schedule_engine.generate(seed=1)
+
+    assert calls["count"] == 1
+    assert len(schedule) == 1
+    match = schedule[0]
+    assert match["weight_class"] == "feather"
+    assert {match["red"], match["white"]} == {"Alpha", "Bravo"}
+
+
 def test_has_unscheduled_fresh_opponent_recognizes_available_pair():
     db = {
         'feather': {
@@ -91,3 +119,33 @@ def test_scheduler_defers_repeats_until_fresh_pairs_exhausted():
         used_pairs.add((wc, *pair))
 
     assert repeat_seen, "Expected the scenario to include at least one repeat pairing"
+
+
+def test_generate_respects_history_with_misspelled_names():
+    db = {
+        'feather': {
+            'robots': {
+                'Alpha': {'present': True, 'rating': 1000},
+                'Bravo': {'present': True, 'rating': 1020},
+                'Charlie': {'present': True, 'rating': 990},
+                'Delta': {'present': True, 'rating': 980},
+            },
+            'history': [
+                {'red_corner': 'Alphaa', 'white_corner': 'Bravo'},
+                {'red_corner': 'Charlie', 'white_corner': 'Delta'},
+            ],
+        }
+    }
+
+    schedule = schedule_engine.generate(
+        desired_per_robot=1, interleave=True, db_by_class=db, seed=7
+    )
+
+    scheduled_pairs = {
+        frozenset((match['red'], match['white'])) for match in schedule
+    }
+
+    assert frozenset({'Alpha', 'Bravo'}) not in scheduled_pairs, (
+        "Alpha vs Bravo should be avoided because the history entry (with a typo) "
+        "indicates they have already fought."
+    )

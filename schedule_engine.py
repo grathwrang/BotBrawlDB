@@ -1,5 +1,14 @@
+import difflib
 import random
+import unicodedata
+from typing import Dict, Optional
+
 from elo import DEFAULT_RATING
+
+try:  # pragma: no cover - fallback for tests that provide db explicitly
+    from storage import load_all as _load_all_dbs
+except Exception:  # pragma: no cover - allow generate() to be used without storage module
+    _load_all_dbs = None
 
 
 def has_unscheduled_fresh_opponent(wc, robot, present, hist, tonight, used_pairs, desired_per_robot):
@@ -17,15 +26,59 @@ def has_unscheduled_fresh_opponent(wc, robot, present, hist, tonight, used_pairs
         if hist.get((wc, *pair), 0) == 0:
             return True
     return False
+
+
+def _normalize_name(raw: str) -> str:
+    return unicodedata.normalize("NFKC", raw or "").strip()
+
+
+def _canonicalize_robot_name(raw: str, *, known: Dict[str, dict]) -> str:
+    if not raw:
+        return ""
+
+    candidates = set(known.keys())
+    if not candidates:
+        return _normalize_name(raw)
+
+    normalized = _normalize_name(raw)
+    if normalized in candidates:
+        return normalized
+
+    lowered = normalized.casefold()
+    for name in candidates:
+        if name.casefold() == lowered:
+            return name
+
+    swapped_quote = normalized.replace("’", "'")
+    if swapped_quote in candidates:
+        return swapped_quote
+    swapped_quote = normalized.replace("'", "’")
+    if swapped_quote in candidates:
+        return swapped_quote
+
+    close_match = difflib.get_close_matches(normalized, list(candidates), n=1, cutoff=0.88)
+    if close_match:
+        return close_match[0]
+
+    return normalized
+
+
 def build_history_counts(db_by_class):
     hist = {}
     for wc, db in db_by_class.items():
-        seen={}
+        robots = db.get("robots", {}) or {}
+        seen = {}
         for m in db.get("history", []):
-            r=m.get("red_corner"); w=m.get("white_corner")
-            if not r or not w: continue
-            k=tuple(sorted([r,w])); seen[k]=seen.get(k,0)+1
-        for (a,b),c in seen.items(): hist[(wc,a,b)]=c
+            raw_red = m.get("red_corner")
+            raw_white = m.get("white_corner")
+            red = _canonicalize_robot_name(raw_red, known=robots)
+            white = _canonicalize_robot_name(raw_white, known=robots)
+            if not red or not white:
+                continue
+            k = tuple(sorted([red, white]))
+            seen[k] = seen.get(k, 0) + 1
+        for (a, b), count in seen.items():
+            hist[(wc, a, b)] = count
     return hist
 def present_by_class(db_by_class):
     out={}
@@ -35,9 +88,20 @@ def present_by_class(db_by_class):
     return out
 def rating_lookup(db_by_class):
     return {(wc,n): info.get("rating", DEFAULT_RATING) for wc,db in db_by_class.items() for n,info in (db.get("robots",{}) or {}).items()}
-def generate(desired_per_robot=1, interleave=True, db_by_class=None, seed=None):
-    if seed is not None: random.seed(seed)
-    if not db_by_class: return []
+def generate(
+    desired_per_robot: int = 1,
+    interleave: bool = True,
+    db_by_class: Optional[Dict[str, dict]] = None,
+    seed: Optional[int] = None,
+):
+    if seed is not None:
+        random.seed(seed)
+    if db_by_class is None:
+        if _load_all_dbs is None:
+            raise RuntimeError("Database loader unavailable; provide db_by_class explicitly")
+        db_by_class = _load_all_dbs()
+    if not db_by_class:
+        return []
     hist = build_history_counts(db_by_class); present = present_by_class(db_by_class)
     if not present: return []
     tonight={(wc,r):0 for wc,rs in present.items() for r in rs}; used_pairs=set(); sched=[]; last=set(); ratings=rating_lookup(db_by_class)
