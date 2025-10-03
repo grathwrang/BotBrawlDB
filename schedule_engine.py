@@ -1,5 +1,12 @@
 import random
+from typing import Dict, Optional
+
 from elo import DEFAULT_RATING
+
+try:  # pragma: no cover - fallback for tests that provide db explicitly
+    from storage import load_all as _load_all_dbs
+except Exception:  # pragma: no cover - allow generate() to be used without storage module
+    _load_all_dbs = None
 
 
 def has_unscheduled_fresh_opponent(wc, robot, present, hist, tonight, used_pairs, desired_per_robot):
@@ -35,9 +42,20 @@ def present_by_class(db_by_class):
     return out
 def rating_lookup(db_by_class):
     return {(wc,n): info.get("rating", DEFAULT_RATING) for wc,db in db_by_class.items() for n,info in (db.get("robots",{}) or {}).items()}
-def generate(desired_per_robot=1, interleave=True, db_by_class=None, seed=None):
-    if seed is not None: random.seed(seed)
-    if not db_by_class: return []
+def generate(
+    desired_per_robot: int = 1,
+    interleave: bool = True,
+    db_by_class: Optional[Dict[str, dict]] = None,
+    seed: Optional[int] = None,
+):
+    if seed is not None:
+        random.seed(seed)
+    if db_by_class is None:
+        if _load_all_dbs is None:
+            raise RuntimeError("Database loader unavailable; provide db_by_class explicitly")
+        db_by_class = _load_all_dbs()
+    if not db_by_class:
+        return []
     hist = build_history_counts(db_by_class); present = present_by_class(db_by_class)
     if not present: return []
     tonight={(wc,r):0 for wc,rs in present.items() for r in rs}; used_pairs=set(); sched=[]; last=set(); ratings=rating_lookup(db_by_class)
