@@ -1,5 +1,22 @@
 import random
 from elo import DEFAULT_RATING
+
+
+def has_unscheduled_fresh_opponent(wc, robot, present, hist, tonight, used_pairs, desired_per_robot):
+    """Return True if *robot* still has an opponent it has never faced available tonight."""
+    if tonight.get((wc, robot), 0) >= desired_per_robot:
+        return False
+    for opponent in present.get(wc, []):
+        if opponent == robot:
+            continue
+        if tonight.get((wc, opponent), 0) >= desired_per_robot:
+            continue
+        pair = tuple(sorted([robot, opponent]))
+        if (wc, *pair) in used_pairs:
+            continue
+        if hist.get((wc, *pair), 0) == 0:
+            return True
+    return False
 def build_history_counts(db_by_class):
     hist = {}
     for wc, db in db_by_class.items():
@@ -34,9 +51,15 @@ def generate(desired_per_robot=1, interleave=True, db_by_class=None, seed=None):
                     key=tuple(sorted([a,b]))
                     if (wc,*key) in used_pairs: continue
                     met=hist.get((wc,*key),0); never=1 if met==0 else 0
+                    fresh_penalty = 0
+                    if met>0 and (
+                        has_unscheduled_fresh_opponent(wc, a, present, hist, tonight, used_pairs, desired_per_robot)
+                        or has_unscheduled_fresh_opponent(wc, b, present, hist, tonight, used_pairs, desired_per_robot)
+                    ):
+                        fresh_penalty = 1
                     diff=abs(ratings.get((wc,a),DEFAULT_RATING)-ratings.get((wc,b),DEFAULT_RATING))
                     consec = (a in last or b in last)
-                    C.append((-never, met, diff, consec, random.random(), wc, a, b))
+                    C.append((-never, fresh_penalty, met, diff, consec, random.random(), wc, a, b))
         return C
     while True:
         if all(c>=desired_per_robot for c in tonight.values()): break
@@ -50,7 +73,7 @@ def generate(desired_per_robot=1, interleave=True, db_by_class=None, seed=None):
             chosen=min(best.values())
         else:
             chosen=min(C)
-        _,_,_,_,_,wc,a,b=chosen
+        _,_,_,_,_,_,wc,a,b=chosen
         red,white=(a,b) if random.random()<0.5 else (b,a)
         sched.append({"weight_class":wc,"red":red,"white":white})
         tonight[(wc,a)]+=1; tonight[(wc,b)]+=1; used_pairs.add((wc,*sorted([a,b]))); last={a,b}
