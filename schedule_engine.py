@@ -1,9 +1,13 @@
 import random
-import unicodedata
-from collections import defaultdict
-from typing import Dict, Iterable, List, Optional, Set, Tuple
+from typing import Dict, Optional
 
-from storage import load_all as _load_all_dbs
+from elo import DEFAULT_RATING
+
+try:  # pragma: no cover - fallback for tests that provide db explicitly
+    from storage import load_all as _load_all_dbs
+except Exception:  # pragma: no cover - allow generate() to be used without storage module
+    _load_all_dbs = None
+
 
 COOLDOWN_MATCHES = 3
 
@@ -110,21 +114,64 @@ def _available_opponents(
             continue
         if counts[(weight_class, opponent)] >= desired_per_robot:
             continue
-        options += 1
-    return options
-
-
-def _run_single_attempt(
-    present: Dict[str, List[str]],
-    pairs: Dict[str, List[Tuple[str, str]]],
-    desired_per_robot: int,
-) -> List[PairKey]:
-    opponents = _index_robot_opponents(pairs)
-    counts: Dict[RobotKey, int] = defaultdict(int)
-    last_seen: Dict[RobotKey, int] = defaultdict(lambda: -COOLDOWN_MATCHES - 1)
-    used_pairs: Set[PairKey] = set()
-    schedule: List[PairKey] = []
-
+        if hist.get((wc, *pair), 0) == 0:
+            return True
+    return False
+def build_history_counts(db_by_class):
+    hist = {}
+    for wc, db in db_by_class.items():
+        seen={}
+        for m in db.get("history", []):
+            r=m.get("red_corner"); w=m.get("white_corner")
+            if not r or not w: continue
+            k=tuple(sorted([r,w])); seen[k]=seen.get(k,0)+1
+        for (a,b),c in seen.items(): hist[(wc,a,b)]=c
+    return hist
+def present_by_class(db_by_class):
+    out={}
+    for wc,db in db_by_class.items():
+        prs=[n for n,info in (db.get("robots",{}) or {}).items() if info.get("present")]
+        if len(prs)>=2: out[wc]=prs
+    return out
+def rating_lookup(db_by_class):
+    return {(wc,n): info.get("rating", DEFAULT_RATING) for wc,db in db_by_class.items() for n,info in (db.get("robots",{}) or {}).items()}
+def generate(
+    desired_per_robot: int = 1,
+    interleave: bool = True,
+    db_by_class: Optional[Dict[str, dict]] = None,
+    seed: Optional[int] = None,
+):
+    if seed is not None:
+        random.seed(seed)
+    if db_by_class is None:
+        if _load_all_dbs is None:
+            raise RuntimeError("Database loader unavailable; provide db_by_class explicitly")
+        db_by_class = _load_all_dbs()
+    if not db_by_class:
+        return []
+    hist = build_history_counts(db_by_class); present = present_by_class(db_by_class)
+    if not present: return []
+    tonight={(wc,r):0 for wc,rs in present.items() for r in rs}; used_pairs=set(); sched=[]; last=set(); ratings=rating_lookup(db_by_class)
+    def candidates():
+        C=[]
+        for wc,rs in present.items():
+            for i in range(len(rs)):
+                for j in range(i+1,len(rs)):
+                    a,b=rs[i],rs[j]
+                    if tonight[(wc,a)]>=desired_per_robot or tonight[(wc,b)]>=desired_per_robot: continue
+                    key=tuple(sorted([a,b]))
+                    if (wc,*key) in used_pairs: continue
+                    met=hist.get((wc,*key),0); never=1 if met==0 else 0
+                    fresh_penalty = 0
+                    if met>0 and (
+                        has_unscheduled_fresh_opponent(wc, a, present, hist, tonight, used_pairs, desired_per_robot)
+                        or has_unscheduled_fresh_opponent(wc, b, present, hist, tonight, used_pairs, desired_per_robot)
+                    ):
+                        fresh_penalty = 1
+                    diff=abs(ratings.get((wc,a),DEFAULT_RATING)-ratings.get((wc,b),DEFAULT_RATING))
+                    consec = (a in last or b in last)
+                    C.append((-never, fresh_penalty, met, diff, consec, random.random(), wc, a, b))
+        return C
     while True:
         candidates: List[Tuple[Tuple[int, int, float], PairKey]] = []
         index = len(schedule)

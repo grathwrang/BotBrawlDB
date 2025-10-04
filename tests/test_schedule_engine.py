@@ -5,8 +5,38 @@ def test_generate_loads_db_when_not_provided(monkeypatch):
     sample_db = {
         "feather": {
             "robots": {
-                "Alpha": {"present": True},
-                "Bravo": {"present": True},
+                "Alpha": {"present": True, "rating": 1000},
+                "Bravo": {"present": True, "rating": 1000},
+            },
+            "history": [],
+        }
+    }
+
+    calls = {"count": 0}
+
+    def fake_load_all():
+        calls["count"] += 1
+        return sample_db
+
+    monkeypatch.setattr(schedule_engine, "_load_all_dbs", fake_load_all)
+
+    schedule = schedule_engine.generate(seed=1)
+
+    assert calls["count"] == 1
+    assert len(schedule) == 1
+    match = schedule[0]
+    assert match["weight_class"] == "feather"
+    assert {match["red"], match["white"]} == {"Alpha", "Bravo"}
+
+
+def test_has_unscheduled_fresh_opponent_recognizes_available_pair():
+    db = {
+        'feather': {
+            'robots': {
+                'Alpha': {'present': True, 'rating': 1000},
+                'Bravo': {'present': True, 'rating': 1010},
+                'Charlie': {'present': True, 'rating': 980},
+                'Delta': {'present': True, 'rating': 990},
             },
             "history": [],
         }
