@@ -38,84 +38,75 @@ def test_has_unscheduled_fresh_opponent_recognizes_available_pair():
                 'Charlie': {'present': True, 'rating': 980},
                 'Delta': {'present': True, 'rating': 990},
             },
-            'history': [
-                {'red_corner': 'Alpha', 'white_corner': 'Bravo'},
-                {'red_corner': 'Alpha', 'white_corner': 'Charlie'},
-            ],
+            "history": [],
         }
     }
 
-    hist = schedule_engine.build_history_counts(db)
-    present = schedule_engine.present_by_class(db)
-    tonight = {(wc, r): 0 for wc, robots in present.items() for r in robots}
-    used_pairs = set()
+    calls = {"count": 0}
 
-    assert schedule_engine.has_unscheduled_fresh_opponent(
-        'feather', 'Alpha', present, hist, tonight, used_pairs, desired_per_robot=1
-    )
+    def fake_load_all():
+        calls["count"] += 1
+        return sample_db
 
-    used_pairs.add(('feather', 'Alpha', 'Delta'))
-    assert not schedule_engine.has_unscheduled_fresh_opponent(
-        'feather', 'Alpha', present, hist, tonight, used_pairs, desired_per_robot=1
-    )
+    monkeypatch.setattr(schedule_engine, "_load_all_dbs", fake_load_all)
+
+    schedule = schedule_engine.generate(seed=1)
+
+    assert calls["count"] == 1
+    assert len(schedule) == 1
+    match = schedule[0]
+    assert match["weight_class"] == "feather"
+    assert {match["red"], match["white"]} == {"Alpha", "Bravo"}
 
 
-def test_scheduler_defers_repeats_until_fresh_pairs_exhausted():
+def test_generate_avoids_history_and_repeats():
     db = {
-        'feather': {
-            'robots': {
-                'Alpha': {'present': True, 'rating': 1000},
-                'Bravo': {'present': True, 'rating': 1020},
-                'Charlie': {'present': True, 'rating': 980},
-                'Delta': {'present': True, 'rating': 1010},
+        "feather": {
+            "robots": {
+                "Alpha": {"present": True},
+                "Bravo": {"present": True},
+                "Charlie": {"present": True},
+                "Delta": {"present": True},
             },
-            'history': [
-                {'red_corner': 'Alpha', 'white_corner': 'Bravo'},
-                {'red_corner': 'Alpha', 'white_corner': 'Charlie'},
-                {'red_corner': 'Bravo', 'white_corner': 'Delta'},
-                {'red_corner': 'Charlie', 'white_corner': 'Delta'},
+            "history": [
+                {"red_corner": "Alpha", "white_corner": "Bravo"},
+                {"red_corner": "Charlie", "white_corner": "Delta"},
             ],
         }
     }
 
-    desired = 2
-    schedule = schedule_engine.generate(
-        desired_per_robot=desired, interleave=True, db_by_class=db, seed=5
-    )
+    schedule = schedule_engine.generate(db_by_class=db, seed=2)
 
-    hist = schedule_engine.build_history_counts(db)
-    present = schedule_engine.present_by_class(db)
-    tonight = {(wc, r): 0 for wc, robots in present.items() for r in robots}
-    used_pairs = set()
+    scheduled_pairs = [frozenset((match["red"], match["white"])) for match in schedule]
 
-    repeat_seen = False
-    for match in schedule:
-        wc = match['weight_class']
-        red = match['red']
-        white = match['white']
-        pair = tuple(sorted([red, white]))
-        met = hist.get((wc, *pair), 0)
+    assert all(pair not in {frozenset({"Alpha", "Bravo"}), frozenset({"Charlie", "Delta"})} for pair in scheduled_pairs)
+    assert len(scheduled_pairs) == len(set(scheduled_pairs)), "No pair should repeat in a single night"
 
-        if met > 0:
-            repeat_seen = True
-            fresh_options = []
-            for i in range(len(present[wc])):
-                for j in range(i + 1, len(present[wc])):
-                    a = present[wc][i]
-                    b = present[wc][j]
-                    if tonight[(wc, a)] >= desired or tonight[(wc, b)] >= desired:
-                        continue
-                    candidate = tuple(sorted([a, b]))
-                    if (wc, *candidate) in used_pairs:
-                        continue
-                    if hist.get((wc, *candidate), 0) == 0:
-                        fresh_options.append(candidate)
-            assert not fresh_options, (
-                f"Repeat pairing {pair} scheduled before exhausting fresh options: {fresh_options}"
-            )
 
-        tonight[(wc, red)] += 1
-        tonight[(wc, white)] += 1
-        used_pairs.add((wc, *pair))
+def test_generate_enforces_cooldown_spacing():
+    robots = {
+        name: {"present": True}
+        for name in ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Gamma", "Hotel"]
+    }
+    db = {
+        "feather": {
+            "robots": robots,
+            "history": [],
+        }
+    }
 
-    assert repeat_seen, "Expected the scenario to include at least one repeat pairing"
+    schedule = schedule_engine.generate(db_by_class=db, seed=3)
+
+    assert len(schedule) == 4, "With eight robots only four matches fit under cooldown constraints"
+
+    last_seen = {}
+    for index, match in enumerate(schedule):
+        red = match["red"]
+        white = match["white"]
+        for robot in (red, white):
+            if robot in last_seen:
+                assert index - last_seen[robot] > schedule_engine.COOLDOWN_MATCHES
+            last_seen[robot] = index
+
+    assert len({frozenset((m["red"], m["white"])) for m in schedule}) == len(schedule)
+    assert len({m["red"] for m in schedule}.union({m["white"] for m in schedule})) == 8
