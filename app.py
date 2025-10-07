@@ -130,6 +130,90 @@ def robot_display(weight_class, name):
     }
 
 
+def _resolve_robot_name(robots, name):
+    if not isinstance(robots, dict):
+        return None
+    key = (name or "").strip()
+    if not key:
+        return None
+    if key in robots:
+        return key
+    lower_map = { (k or "").strip().lower(): k for k in robots.keys() }
+    return lower_map.get(key.lower())
+
+
+def record_match_result(wc, red, white, result, *, timestamp=None, extra_fields=None):
+    if result not in VALID_RESULTS:
+        return None, "Invalid result"
+    if wc not in WEIGHT_CLASSES:
+        return None, "Invalid weight class"
+    try:
+        db = load_db(wc)
+    except KeyError:
+        return None, "Weight class not found"
+
+    robots = db.setdefault("robots", {})
+    red_key = _resolve_robot_name(robots, red)
+    white_key = _resolve_robot_name(robots, white)
+    if not red_key or not white_key or red_key not in robots or white_key not in robots:
+        return None, "Robot not found"
+
+    rr = robots[red_key]
+    rw = robots[white_key]
+
+    old_r = rr.get("rating", DEFAULT_RATING)
+    old_w = rw.get("rating", DEFAULT_RATING)
+    e_r = get_expected(old_r, old_w)
+    e_w = 1 - e_r
+    k_base, ko_w = get_settings(db)
+
+    if result == "Red wins JD":
+        s_r, s_w, w_r, w_w = 1, 0, 1, 1
+    elif result == "Red wins KO":
+        s_r, s_w, w_r, w_w = 1, 0, ko_w, 1
+    elif result == "White wins JD":
+        s_r, s_w, w_r, w_w = 0, 1, 1, 1
+    elif result == "White wins KO":
+        s_r, s_w, w_r, w_w = 0, 1, 1, ko_w
+    else:
+        s_r, s_w, w_r, w_w = 0.5, 0.5, 1, 1
+
+    k_r = get_k_for_robot(len(rr.get("matches", [])), k_base)
+    k_w = get_k_for_robot(len(rw.get("matches", [])), k_base)
+    new_r = round(old_r + k_r * ((s_r * w_r) - e_r))
+    new_w = round(old_w + k_w * ((s_w * w_w) - e_w))
+
+    ts = int(timestamp if timestamp is not None else time.time())
+    mid = db.get("next_match_id", 1)
+    entry = {
+        "match_id": mid,
+        "timestamp": ts,
+        "red_corner": red_key,
+        "white_corner": white_key,
+        "result": result,
+        "old_rating_red": old_r,
+        "old_rating_white": old_w,
+        "new_rating_red": new_r,
+        "new_rating_white": new_w,
+        "change_red": new_r - old_r,
+        "change_white": new_w - old_w,
+    }
+    for key, value in (extra_fields or {}).items():
+        if key not in entry:
+            entry[key] = value
+
+    db.setdefault("history", []).append(entry)
+    db["next_match_id"] = mid + 1
+
+    rr["rating"] = new_r
+    rw["rating"] = new_w
+    rr.setdefault("matches", []).append(entry)
+    rw.setdefault("matches", []).append(entry)
+
+    save_db(wc, db)
+    return entry, None
+
+
 def finalize_current_match(state, schedule_data):
     current = state.get("current")
     if not current:
@@ -139,6 +223,42 @@ def finalize_current_match(state, schedule_data):
     normalized_entry, _ = normalize_match(history_entry)
     if normalized_entry:
         history_entry = normalized_entry
+
+    summary = history_entry.get("summary") or {}
+    winner = summary.get("winner")
+    if winner == "red":
+        result_label = "Red wins JD"
+    elif winner == "white":
+        result_label = "White wins JD"
+    else:
+        result_label = "Draw"
+
+    elo_entry = None
+    elo_error = None
+    if history_entry.get("weight_class") and history_entry.get("red") and history_entry.get("white"):
+        extra_fields = {
+            "judging_match_id": history_entry.get("match_id"),
+            "judging_decision": summary.get("decision"),
+            "judging_counts": summary.get("counts"),
+            "judging_scorecards": summary.get("judge_cards"),
+        }
+        elo_entry, elo_error = record_match_result(
+            history_entry.get("weight_class"),
+            history_entry.get("red"),
+            history_entry.get("white"),
+            result_label,
+            timestamp=history_entry.get("completed_at"),
+            extra_fields=extra_fields,
+        )
+    if elo_entry:
+        history_entry["elo_recorded"] = True
+        history_entry["elo_history_match_id"] = elo_entry.get("match_id")
+        history_entry["elo_result"] = elo_entry.get("result")
+    else:
+        history_entry["elo_recorded"] = False
+        if elo_error:
+            history_entry["elo_error"] = elo_error
+
     state.setdefault("history", [])
     state["history"].insert(0, history_entry)
     state["current"] = None
@@ -179,38 +299,12 @@ def submit_match():
     if wc not in WEIGHT_CLASSES or not red or not white or result not in VALID_RESULTS or red == white:
         flash("Bad match input", "error")
         return redirect(url_for("index", wc=wc or WEIGHT_CLASSES[0]))
-    db = load_db(wc)
-    robots = db.setdefault("robots", {})
-    # Allow case-insensitive robot name input
-    if red not in robots or white not in robots:
-        lower_map = {k.lower(): k for k in robots.keys()}
-        if red not in robots and red.lower() in lower_map:
-            red = lower_map[red.lower()]
-        if white not in robots and white.lower() in lower_map:
-            white = lower_map[white.lower()]
-    if red not in robots or white not in robots:
-        flash("Robot not found", "error"); return redirect(url_for("index", wc=wc))
-    rr = robots[red]; rw = robots[white]
-    old_r = rr.get("rating", DEFAULT_RATING); old_w = rw.get("rating", DEFAULT_RATING)
-    e_r = get_expected(old_r, old_w); e_w = 1 - e_r
-    k_base, ko_w = get_settings(db)
-    if result == "Red wins JD": s_r,s_w,w_r,w_w=1,0,1,1
-    elif result == "Red wins KO": s_r,s_w,w_r,w_w=1,0,ko_w,1
-    elif result == "White wins JD": s_r,s_w,w_r,w_w=0,1,1,1
-    elif result == "White wins KO": s_r,s_w,w_r,w_w=0,1,1,ko_w
-    else: s_r,s_w,w_r,w_w=0.5,0.5,1,1
-    k_r = get_k_for_robot(len(rr.get("matches", [])), k_base)
-    k_w = get_k_for_robot(len(rw.get("matches", [])), k_base)
-    new_r = round(old_r + k_r * ((s_r * w_r) - e_r))
-    new_w = round(old_w + k_w * ((s_w * w_w) - e_w))
-    mid = db.get("next_match_id", 1); ts = int(time.time())
-    entry = {"match_id": mid,"timestamp": ts,"red_corner": red,"white_corner": white,"result": result,
-             "old_rating_red": old_r,"old_rating_white": old_w,"new_rating_red": new_r,"new_rating_white": new_w,
-             "change_red": new_r-old_r,"change_white": new_w-old_w}
-    db.setdefault("history", []).append(entry); db["next_match_id"]=mid+1
-    rr["rating"]=new_r; rw["rating"]=new_w
-    rr.setdefault("matches", []).append(entry); rw.setdefault("matches", []).append(entry)
-    save_db(wc, db)
+    entry, error = record_match_result(wc, red, white, result)
+    if entry is None:
+        flash(error or "Robot not found", "error")
+        return redirect(url_for("index", wc=wc))
+    red = entry.get("red_corner", red)
+    white = entry.get("white_corner", white)
 
     if request.form.get("popFromSchedule") == "1":
         sched = load_schedule(); L = sched.get("list", [])
